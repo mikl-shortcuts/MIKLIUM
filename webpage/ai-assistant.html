@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-page="support">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIKLIUM AI Assistant</title>
+    <title>AI Assistant - MIKLIUM</title>
+    <meta name="description" content="MIKLIUM AI Assistant - Get help with APIs, documentation, and tools.">
+    <meta property="og:title" content="AI Assistant - MIKLIUM">
+    <meta property="og:description" content="MIKLIUM AI Assistant - Get help with APIs, documentation, and tools.">
+    <meta property="og:image"
+        content="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Preview.png">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#0155A1">
+    <link rel="icon" type="image/png"
+        href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+    <link rel="apple-touch-icon"
+        href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,422 +22,449 @@
     <link
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
-
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        :root {
-            --accent: #0155A1;
-            --accent-hover: #1e70c1;
-            --accent-dark: #004382;
-            --accent-glow: rgba(1, 85, 161, 0.35);
-            --accent-border: rgba(1, 85, 161, 0.4);
-            --bg: #000;
-            --surface: rgba(255, 255, 255, 0.035);
-            --surface-hover: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.25);
-            --text-primary: #fff;
-            --text-secondary: #a1a1a6;
-            --text-tertiary: #6e6e73;
-            --glass-bg: rgba(20, 20, 22, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-highlight: rgba(255, 255, 255, 0.18);
-            --glass-shadow: rgba(0, 0, 0, 0.5);
-            --radius-pill: 100px;
-            --radius-card: 24px;
-            --radius-sm: 14px;
-            --radius-xs: 12px;
-            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-            --font-mono: 'JetBrains Mono', monospace;
-        }
-
         body {
-            background: linear-gradient(135deg, #000 0%, #0a0a0a 50%, #000814 100%);
-            background-attachment: fixed;
-            color: var(--text-primary);
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        .chat-container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Header */
-        .chat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.6rem 1.2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-pill);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
-            z-index: 100;
+        .chat-messages {
             position: fixed;
-            top: 1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 600px;
-            animation: slideDown 0.8s var(--transition-smooth);
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .header-logo {
-            width: 24px;
-            height: 24px;
-        }
-
-        .header-brand h1 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.3px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        #close-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 4px;
-            transition: color 0.2s;
-        }
-
-        #close-btn:hover {
-            color: #fff;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #34c759;
-            box-shadow: 0 0 8px rgba(52, 199, 89, 0.5);
-        }
-
-        /* Messages Area */
-        .messages-wrapper {
-            flex: 1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 7rem 1rem 10rem 1rem;
-            gap: 1.2rem;
+            padding: calc(var(--nav-height) + 3rem) 1rem 11rem 1rem;
+            gap: 1.4rem;
             scroll-behavior: smooth;
+            z-index: 1;
         }
 
-        .messages-wrapper::-webkit-scrollbar {
-            width: 6px;
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
         }
 
-        .messages-wrapper::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 10px;
         }
 
-        /* Empty State */
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
         .empty-state {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
+            flex: 1;
             text-align: center;
-            animation: fadeIn 0.8s var(--transition-smooth);
+            padding: 2rem 1rem;
+            animation: fadeUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeUp {
             from {
                 opacity: 0;
+                transform: translateY(24px);
             }
-
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        .empty-state-icon {
-            font-size: 3.5rem;
-            color: var(--accent);
-            margin-bottom: 1rem;
-            opacity: 0.8;
-            text-shadow: 0 0 30px rgba(1, 85, 161, 0.3);
+        .empty-orb {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 1.4rem;
+            box-shadow: 0 0 40px rgba(1, 85, 161, 0.25), 0 0 80px rgba(1, 85, 161, 0.08);
+            animation: orbFloat 5s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.08); opacity: 0.7; }
+        }
+
+        .empty-orb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .empty-state h2 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
-            font-weight: 700;
+            letter-spacing: -0.4px;
         }
 
         .empty-state p {
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 320px;
+            max-width: 380px;
             line-height: 1.6;
-            font-size: 0.95rem;
+            margin-bottom: 2rem;
         }
 
-        /* Messages */
+        .suggestions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            width: 100%;
+            max-width: 460px;
+            animation: fadeUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both;
+        }
+
+        .suggestion-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 0.85rem 1rem;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+        }
+
+        .suggestion-card:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent-border);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--accent-border);
+        }
+
+        .suggestion-card:active {
+            transform: translateY(-1px);
+        }
+
+        .sug-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(1, 85, 161, 0.1);
+            border: 1px solid rgba(1, 85, 161, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sug-icon i {
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        .sug-text strong {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+            line-height: 1.3;
+            margin-bottom: 0.15rem;
+        }
+
+        .sug-text span {
+            font-size: 0.68rem;
+            color: var(--text-tertiary);
+            line-height: 1.3;
+        }
+
         .message {
             display: flex;
-            gap: 0.8rem;
+            gap: 0.7rem;
             width: 100%;
-            max-width: 800px;
-            animation: fadeIn 0.4s var(--transition-smooth);
+            max-width: 760px;
+            animation: msgIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .message.user {
             justify-content: flex-end;
         }
 
-        .message-content {
-            max-width: 85%;
+        .msg-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            overflow: hidden;
         }
 
-        .message.user .message-content {
+        .message.ai .msg-avatar {
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(1, 85, 161, 0.25);
+            background: none;
+        }
+        
+        .msg-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .msg-body {
+            max-width: 82%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.user .msg-body {
             align-items: flex-end;
         }
 
-        .message-bubble {
-            padding: 0.9rem 1.2rem;
-            border-radius: var(--radius-card);
-            line-height: 1.6;
+        .msg-bubble {
+            padding: 0.85rem 1.15rem;
+            line-height: 1.65;
             word-wrap: break-word;
-            font-size: 0.95rem;
-            animation: slideUp 0.4s var(--transition-smooth);
+            font-size: 0.9rem;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.ai .message-bubble {
+        .message.ai .msg-bubble {
             background: var(--surface);
             border: 1px solid var(--border);
+            border-radius: var(--radius-card) var(--radius-card) var(--radius-card) 6px;
             color: var(--text-primary);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border-bottom-left-radius: 4px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
 
-        .message.user .message-bubble {
-            background: var(--accent);
+        .message.user .msg-bubble {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             color: #fff;
-            box-shadow: 0 4px 20px rgba(1, 85, 161, 0.4);
-            border-bottom-right-radius: 4px;
+            border-radius: var(--radius-card) var(--radius-card) 6px var(--radius-card);
+            box-shadow: 0 4px 20px rgba(1, 85, 161, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .message-meta {
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
-            padding: 0 0.5rem;
-            opacity: 0.8;
+        .message.user .msg-bubble::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 60%);
+            pointer-events: none;
         }
 
-        /* Link Cards */
         .link-container {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
-            margin-top: 0.8rem;
-            width: 100%;
+            gap: 0.45rem;
+            margin-top: 0.7rem;
         }
 
         .link-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 0.8rem 1rem;
+            padding: 0.65rem 0.9rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             text-decoration: none;
             color: var(--text-primary);
-            transition: all 0.2s var(--transition-smooth);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(90deg, rgba(1, 85, 161, 0.06), transparent);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .link-card:hover::before {
+            width: 100%;
         }
 
         .link-card:hover {
-            background: var(--surface-hover);
             border-color: var(--accent-border);
             transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .link-card i:first-child {
-            color: var(--accent);
-            font-size: 1rem;
-            width: 20px;
-            text-align: center;
-        }
-
-        .link-card span {
-            font-size: 0.85rem;
-            font-weight: 600;
-            flex: 1;
-            margin-left: 0.8rem;
-        }
-
-        .link-card .arrow {
-            font-size: 0.7rem;
-            opacity: 0.5;
-            color: var(--text-tertiary);
-        }
-
-        /* Typing Indicator */
-        .typing-indicator {
+        .link-left {
             display: flex;
-            gap: 4px;
-            padding: 0.8rem 1.2rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-card);
-            width: fit-content;
+            align-items: center;
+            gap: 0.7rem;
+            position: relative;
+            z-index: 1;
         }
 
-        .typing-dot {
+        .link-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: rgba(1, 85, 161, 0.1);
+            border: 1px solid rgba(1, 85, 161, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .link-icon i {
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        .link-info .link-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .link-info .link-desc {
+            font-size: 0.62rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+        }
+
+        .link-card .link-arrow {
+            font-size: 0.6rem;
+            color: var(--text-tertiary);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .link-card:hover .link-arrow {
+            color: var(--accent);
+            transform: translateX(3px);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+            padding: 0.4rem 0;
+            align-items: center;
+        }
+
+        .typing-dots span {
             width: 6px;
             height: 6px;
             border-radius: 50%;
             background: var(--accent);
-            animation: typingBounce 1.4s infinite;
+            opacity: 0.6;
+            animation: dotBounce 1.4s infinite;
         }
 
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes dotBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-7px); }
         }
 
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingBounce {
-
-            0%,
-            60%,
-            100% {
-                transform: translateY(0);
-            }
-
-            30% {
-                transform: translateY(-6px);
-            }
-        }
-
-        /* Input Area */
-        .input-area {
-            display: flex;
-            flex-direction: column;
-            padding: 0.8rem 1rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 35px;
+        .chat-input-wrap {
             position: fixed;
-            bottom: 2rem;
+            bottom: 1.5rem;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 600px;
-            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5);
+            max-width: 620px;
             z-index: 100;
-            animation: inputSlideUp 0.8s var(--transition-smooth);
+            animation: inputUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
         }
 
-        @keyframes inputSlideUp {
+        @keyframes inputUp {
             from {
                 opacity: 0;
-                transform: translate(-50%, 20px);
+                transform: translate(-50%, 24px) scale(0.96);
             }
-
             to {
                 opacity: 1;
-                transform: translate(-50%, 0);
+                transform: translate(-50%, 0) scale(1);
             }
         }
 
-        .input-wrapper {
+        .input-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-pill);
+            padding: 0.45rem 0.55rem 0.45rem 0.45rem;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--glass-highlight);
             display: flex;
-            gap: 0.8rem;
             align-items: center;
+            gap: 0.5rem;
+            transition: border-color 0.4s, box-shadow 0.4s;
         }
 
-        .input-field {
-            flex: 1;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 0.8rem 1.2rem;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.3s var(--transition-smooth);
-        }
-
-        .input-field:focus {
+        .input-glass.focused {
             border-color: var(--accent-border);
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 15px rgba(1, 85, 161, 0.15);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(1, 85, 161, 0.1), inset 0 1px 0 var(--glass-highlight);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.65rem 0.8rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-tertiary);
         }
 
         .send-btn {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: var(--accent);
             border: none;
@@ -436,302 +473,666 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s var(--transition-smooth);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(1, 85, 161, 0.3);
+            font-size: 0.85rem;
+            box-shadow: 0 2px 12px rgba(1, 85, 161, 0.3);
         }
 
         .send-btn:hover:not(:disabled) {
             background: var(--accent-hover);
-            transform: scale(1.05);
+            transform: scale(1.08);
+            box-shadow: 0 4px 20px rgba(1, 85, 161, 0.4);
+        }
+
+        .send-btn:active:not(:disabled) {
+            transform: scale(0.94);
         }
 
         .send-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        /* Basic Markdown Styling */
-        .text-content ul {
-            margin: 0.5rem 0;
-            padding-left: 1.2rem;
+        .send-btn.sending i {
+            animation: spinIcon 0.8s linear infinite;
+        }
+
+        @keyframes spinIcon {
+            to { transform: rotate(360deg); }
+        }
+
+        .input-hint {
+            text-align: center;
+            padding-top: 0.5rem;
+        }
+
+        .input-hint span {
+            font-size: 0.62rem;
+            color: var(--text-tertiary);
+            opacity: 0.45;
+        }
+
+        .input-bg-fade {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 12rem;
+            background: linear-gradient(to bottom, transparent 0%, var(--bg) 55%);
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .text-content {
+            font-size: 0.9rem;
+            line-height: 1.65;
+        }
+
+        .text-content p { margin-bottom: 0.5rem; }
+        .text-content p:last-child { margin-bottom: 0; }
+
+        .text-content ul, .text-content ol {
+            margin: 0.4rem 0;
+            padding-left: 1.3rem;
         }
 
         .text-content li {
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.55;
         }
 
         .text-content strong {
             color: var(--text-primary);
-        }
-
-        .text-link {
-            color: var(--accent);
             font-weight: 600;
         }
 
-        @media (max-width: 480px) {
-            .chat-header {
-                width: 95%;
-                top: 1rem;
+        .text-content em { color: var(--text-secondary); }
+
+        .text-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.4rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-content a {
+            color: var(--accent-hover);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .text-content a:hover { color: #5aa8e8; text-decoration: underline; }
+
+        .text-content blockquote {
+            border-left: 3px solid var(--accent);
+            padding: 0.4rem 0.8rem;
+            margin: 0.6rem 0;
+            background: rgba(1, 85, 161, 0.06);
+            border-radius: 0 10px 10px 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .text-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 0.8rem 0;
+        }
+
+        .text-content h1, .text-content h2, .text-content h3 {
+            margin: 0.8rem 0 0.4rem 0;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        .text-content h1 { font-size: 1.15rem; }
+        .text-content h2 { font-size: 1.05rem; }
+        .text-content h3 { font-size: 0.95rem; }
+
+        .text-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.6rem 0;
+            font-size: 0.82rem;
+        }
+
+        .text-content th, .text-content td {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .text-content th {
+            background: var(--surface);
+            font-weight: 600;
+        }
+
+        .code-block-wrapper {
+            position: relative;
+            margin: 0.6rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            padding: 0.4rem 0.75rem;
+        }
+
+        .code-block-lang {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .code-block-lang i { font-size: 0.7rem; }
+
+        .code-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: var(--radius-pill);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-size: 0.6rem;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        .code-copy-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+            background: var(--surface-hover);
+        }
+
+        .code-copy-btn.copied {
+            color: #34c759;
+            border-color: rgba(52, 199, 89, 0.3);
+            background: rgba(52, 199, 89, 0.08);
+        }
+
+        .code-block-wrapper pre {
+            margin: 0 !important;
+            border-radius: 0 0 12px 12px !important;
+            border: 1px solid var(--border) !important;
+            border-top: none !important;
+            background: rgba(13, 17, 23, 0.95) !important;
+        }
+
+        .code-block-wrapper pre code {
+            font-size: 0.76rem;
+            line-height: 1.5;
+            font-family: var(--font-mono);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 7rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(12px);
+            padding: 0.55rem 1.1rem;
+            border-radius: var(--radius-pill);
+            background: rgba(20, 20, 22, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            font-size: 0.78rem;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i { color: #34c759; }
+
+        @media (max-width: 600px) {
+            .chat-messages {
+                padding: calc(var(--nav-height) + 2rem) 0.75rem 10rem 0.75rem;
+                gap: 1rem;
             }
 
-            .input-area {
-                width: 95%;
+            .chat-input-wrap {
+                width: 94%;
                 bottom: 1rem;
             }
 
-            .messages-wrapper {
-                padding-top: 6rem;
-                padding-bottom: 8rem;
+            .msg-body {
+                max-width: 88%;
             }
+
+            .suggestions {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+
+            .empty-orb {
+                width: 90px;
+                height: 90px;
+            }
+
+            .empty-state h2 { font-size: 1.25rem; }
+            .empty-state p { font-size: 0.85rem; }
+            .code-block-wrapper pre code { font-size: 0.72rem; }
+            .input-bg-fade { height: 10rem; }
+        }
+
+        @media (max-width: 380px) {
+            .suggestion-card {
+                padding: 0.7rem 0.8rem;
+            }
+            .sug-text strong { font-size: 0.73rem; }
+            .sug-text span { font-size: 0.63rem; }
         }
     </style>
 </head>
 
 <body>
-    <div class="chat-container">
-        <!-- Header -->
-        <div class="chat-header">
-            <div class="header-brand">
-                <img src="assets/Logo_Transparent_White.png" alt="MIKLIUM" class="header-logo">
-                <h1>MIKLIUM Assistant</h1>
-            </div>
-            <div class="header-actions">
-                <div class="status-indicator" title="Online"></div>
-                <button id="close-btn" title="Close Assistant"><i class="fas fa-times"></i></button>
+    <nav>
+        <div class="nav-top">
+            <a href="index.html" class="nav-brand">
+                <img src="assets/Logo.svg" alt="" class="nav-logo">
+                MIKLIUM
+            </a>
+            <button class="nav-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+            <ul class="nav-links">
+                <li><a href="index.html" data-nav="home">Home</a></li>
+                <li><a href="projects.html" data-nav="projects">Projects</a></li>
+                <li><a href="GetStarted.html" data-nav="getstarted">Get Started</a></li>
+                <li><a href="APIDOCS.html" data-nav="apidocs">API Docs</a></li>
+                <li><a href="playground.html" data-nav="playground">Playground</a></li>
+                <li><a href="support.html" data-nav="support">Support</a></li>
+                <li class="nav-icons">
+                    <a href="https://discord.gg/6HUJTXh45t" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://github.com/MIKLIUM-Team" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-mobile-links">
+            <a href="index.html" data-nav="home"><i class="fas fa-house"></i> Home</a>
+            <a href="projects.html" data-nav="projects"><i class="fas fa-cube"></i> Featured Projects</a>
+            <a href="GetStarted.html" data-nav="getstarted"><i class="fas fa-play"></i> Get Started</a>
+            <a href="APIDOCS.html" data-nav="apidocs"><i class="fas fa-book"></i> API Docs</a>
+            <a href="playground.html" data-nav="playground"><i class="fas fa-flask"></i> API Playground</a>
+            <a href="support.html" data-nav="support"><i class="fas fa-headset"></i> Support</a>
+            <div class="nav-mobile-icons">
+                <a href="https://discord.gg/6HUJTXh45t" target="_blank"><i class="fab fa-discord"></i></a>
+                <a href="https://github.com/MIKLIUM-Team" target="_blank"><i class="fab fa-github"></i></a>
             </div>
         </div>
+    </nav>
 
-        <!-- Messages Area -->
-        <div class="messages-wrapper" id="chat-container">
-            <div class="empty-state" id="intro-screen">
-                <div class="empty-state-icon">
-                    <i class="fas fa-brain"></i>
+    <div class="chat-messages" id="messages">
+        <div class="empty-state" id="empty-state">
+            <div class="empty-orb">
+                <img src="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png" alt="MIKLIUM">
+            </div>
+            <h2>How can I help you?</h2>
+            <p>Ask me anything about MIKLIUM — APIs, documentation, integration, or getting started.</p>
+            <div class="suggestions" id="suggestions">
+                <div class="suggestion-card" data-q="What APIs does MIKLIUM offer and how do I use them?">
+                    <div class="sug-icon"><i class="fas fa-plug"></i></div>
+                    <div class="sug-text">
+                        <strong>Explore APIs</strong>
+                        <span>See all available endpoints</span>
+                    </div>
                 </div>
-                <h2>AI Helper</h2>
-                <p>I can help you with questions about MIKLIUM APIs, documentation, and tools.</p>
-            </div>
-        </div>
-
-        <!-- Input Area -->
-        <div class="input-area">
-            <div class="input-wrapper">
-                <input type="text" id="user-input" class="input-field" placeholder="Ask anything about MIKLIUM..."
-                    autocomplete="off">
-                <button class="send-btn" id="send-btn" disabled title="Send">
-                    <i class="fas fa-arrow-up"></i>
-                </button>
+                <div class="suggestion-card" data-q="How do I get started with MIKLIUM? Give me a step-by-step guide.">
+                    <div class="sug-icon"><i class="fas fa-rocket"></i></div>
+                    <div class="sug-text">
+                        <strong>Quick Start</strong>
+                        <span>Step-by-step setup guide</span>
+                    </div>
+                </div>
+                <div class="suggestion-card" data-q="Show me JavaScript code examples for MIKLIUM APIs with fetch requests.">
+                    <div class="sug-icon"><i class="fas fa-code"></i></div>
+                    <div class="sug-text">
+                        <strong>Code Examples</strong>
+                        <span>Ready-to-use JS snippets</span>
+                    </div>
+                </div>
+                <div class="suggestion-card" data-q="How can I join the MIKLIUM community on Discord and contribute on GitHub?">
+                    <div class="sug-icon"><i class="fas fa-users"></i></div>
+                    <div class="sug-text">
+                        <strong>Community</strong>
+                        <span>Discord, GitHub & more</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const introScreen = document.getElementById('intro-screen');
-        const closeBtn = document.getElementById('close-btn');
+    <div class="input-bg-fade"></div>
 
-        // Show close button only if we are inside an iframe
-        if (window.self !== window.top) {
-            closeBtn.style.display = 'block';
-            closeBtn.addEventListener('click', () => {
-                if (window.parent && window.parent.closeAIAssistant) {
-                    window.parent.closeAIAssistant();
-                }
+    <div class="chat-input-wrap">
+        <div class="input-glass" id="input-glass">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask anything about MIKLIUM..." autocomplete="off">
+            <button class="send-btn" id="send-btn" disabled title="Send"><i class="fas fa-arrow-up"></i></button>
+        </div>
+        <div class="input-hint">
+            <span>MIKLIUM AI can make mistakes. Verify important information.</span>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-text">Copied to clipboard</span>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var page = document.documentElement.getAttribute("data-page");
+            document.querySelectorAll("[data-nav]").forEach(function (a) {
+                if (a.getAttribute("data-nav") === page) a.classList.add("active");
             });
-        }
+            var toggle = document.querySelector(".nav-toggle");
+            var mobileLinks = document.querySelector(".nav-mobile-links");
+            var navEl = document.querySelector("nav");
+            if (toggle && mobileLinks && navEl) {
+                toggle.addEventListener("click", function () {
+                    var open = mobileLinks.classList.toggle("open");
+                    navEl.classList.toggle("nav-expanded", open);
+                    toggle.innerHTML = open ? '<i class="fas fa-xmark"></i>' : '<i class="fas fa-bars"></i>';
+                });
+            }
+        });
 
-        const SITE_LINKS = {
-            "index.html": { name: "Home", icon: "fas fa-house" },
-            "APIDOCS.html": { name: "API Documentation", icon: "fas fa-book" },
-            "GetStarted.html": { name: "Get Started Guide", icon: "fas fa-play" },
-            "projects.html": { name: "Featured Projects", icon: "fas fa-cube" },
-            "support.html": { name: "Help & Support", icon: "fas fa-headset" },
-            "https://github.com/MIKLIUM": { name: "GitHub Organization", icon: "fab fa-github" },
-            "https://discord.gg/6HUJTXh45t": { name: "Discord Community", icon: "fab fa-discord" }
+        var messages = document.getElementById('messages');
+        var chatInput = document.getElementById('chat-input');
+        var sendBtn = document.getElementById('send-btn');
+        var inputGlass = document.getElementById('input-glass');
+        var toastEl = document.getElementById('toast');
+        var toastTextEl = document.getElementById('toast-text');
+
+        var conversationHistory = [];
+        var isProcessing = false;
+        var toastTimeout = null;
+
+        var SITE_LINKS = {
+            "index.html": { name: "Home", icon: "fas fa-house", desc: "miklium.vercel.app" },
+            "APIDOCS.html": { name: "API Documentation", icon: "fas fa-book", desc: "Full API reference" },
+            "GetStarted.html": { name: "Get Started Guide", icon: "fas fa-play", desc: "Quick start tutorial" },
+            "projects.html": { name: "Featured Projects", icon: "fas fa-cube", desc: "Community projects" },
+            "playground.html": { name: "API Playground", icon: "fas fa-flask", desc: "Test APIs live" },
+            "https://github.com/MIKLIUM-Team/MIKLIUM": { name: "GitHub", icon: "fab fa-github", desc: "github.com/MIKLIUM-Team/MIKLIUM" },
+            "https://discord.gg/6HUJTXh45t": { name: "Discord Community", icon: "fab fa-discord", desc: "Join the server" }
         };
 
-        function init() {
-            sendBtn.disabled = false;
+        var LANG_MAP = {
+            javascript: { icon: "fab fa-js", name: "JavaScript" },
+            json: { icon: "fas fa-code", name: "JSON" },
+            python: { icon: "fab fa-python", name: "Python" },
+            bash: { icon: "fas fa-terminal", name: "Bash" },
+            shell: { icon: "fas fa-terminal", name: "Shell" },
+            text: { icon: "fas fa-file-lines", name: "Text" },
+            html: { icon: "fab fa-html5", name: "HTML" },
+            css: { icon: "fab fa-css3-alt", name: "CSS" },
+            typescript: { icon: "fas fa-code", name: "TypeScript" }
+        };
+
+        function showToast(msg) {
+            toastTextEl.textContent = msg;
+            toastEl.classList.add('visible');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(function () { toastEl.classList.remove('visible'); }, 2200);
         }
 
-        function appendMessage(role, text) {
-            if (introScreen) introScreen.style.display = 'none';
-
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${role}`;
-
-            const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-            if (role === 'ai') {
-                msgDiv.innerHTML = `
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            <div class="text-content"></div>
-                            <div class="link-container"></div>
-                        </div>
-                        <div class="message-meta">MIKLIUM AI • ${time}</div>
-                    </div>
-                `;
-                chatContainer.appendChild(msgDiv);
-                scrollToBottom();
-                return {
-                    text: msgDiv.querySelector('.text-content'),
-                    links: msgDiv.querySelector('.link-container')
-                };
-            } else {
-                msgDiv.innerHTML = `
-                    <div class="message-content">
-                        <div class="message-bubble">${escapeHtml(text)}</div>
-                        <div class="message-meta">${time}</div>
-                    </div>
-                `;
-                chatContainer.appendChild(msgDiv);
-            }
-
-            scrollToBottom();
+        function getLangInfo(lang) {
+            return LANG_MAP[lang] || { icon: "fas fa-code", name: lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : "Code" };
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function escapeHtml(t) {
+            var d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
         }
 
-        function scrollToBottom() {
-            setTimeout(() => {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 50);
+        function scrollBottom() {
+            requestAnimationFrame(function () {
+                messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+            });
         }
 
-        function parseAndRenderLinks(fullText, containers) {
-            const markdownRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-            const bareHtmlRegex = /(?:\s|^)([\w-]+\.html)(?:\b)/gi;
-            const fullUrlRegex = /(https?:\/\/[^\s)\]<]+)/gi;
+        chatInput.addEventListener('input', function () {
+            sendBtn.disabled = !chatInput.value.trim() || isProcessing;
+        });
 
-            const normalize = (u) => {
-                let url = u.trim().replace(/\/$/, "");
-                if (url.toLowerCase().endsWith('.html')) return url.toLowerCase();
-                return url;
+        chatInput.addEventListener('focus', function () { inputGlass.classList.add('focused'); });
+        chatInput.addEventListener('blur', function () { inputGlass.classList.remove('focused'); });
+
+        chatInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+        });
+
+        sendBtn.addEventListener('click', handleSend);
+
+        document.getElementById('suggestions').addEventListener('click', function (e) {
+            var card = e.target.closest('.suggestion-card');
+            if (card) { chatInput.value = card.getAttribute('data-q'); sendBtn.disabled = false; handleSend(); }
+        });
+
+        function buildEmptyState() {
+            var d = document.createElement('div');
+            d.className = 'empty-state';
+            d.id = 'empty-state';
+            d.innerHTML =
+                '<div class="empty-orb"><img src="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png" alt="MIKLIUM"></div>' +
+                '<h2>How can I help you?</h2>' +
+                '<p>Ask me anything about MIKLIUM — APIs, documentation, integration, or getting started.</p>' +
+                '<div class="suggestions" id="suggestions">' +
+                '<div class="suggestion-card" data-q="What APIs does MIKLIUM offer and how do I use them?"><div class="sug-icon"><i class="fas fa-plug"></i></div><div class="sug-text"><strong>Explore APIs</strong><span>See all available endpoints</span></div></div>' +
+                '<div class="suggestion-card" data-q="How do I get started with MIKLIUM? Give me a step-by-step guide."><div class="sug-icon"><i class="fas fa-rocket"></i></div><div class="sug-text"><strong>Quick Start</strong><span>Step-by-step setup guide</span></div></div>' +
+                '<div class="suggestion-card" data-q="Show me JavaScript code examples for MIKLIUM APIs with fetch requests."><div class="sug-icon"><i class="fas fa-code"></i></div><div class="sug-text"><strong>Code Examples</strong><span>Ready-to-use JS snippets</span></div></div>' +
+                '<div class="suggestion-card" data-q="How can I join the MIKLIUM community on Discord and contribute on GitHub?"><div class="sug-icon"><i class="fas fa-users"></i></div><div class="sug-text"><strong>Community</strong><span>Discord, GitHub & more</span></div></div>' +
+                '</div>';
+            d.querySelector('.suggestions').addEventListener('click', function (e) {
+                var card = e.target.closest('.suggestion-card');
+                if (card) { chatInput.value = card.getAttribute('data-q'); sendBtn.disabled = false; handleSend(); }
+            });
+            return d;
+        }
+
+        function addUser(text) {
+            var el = document.getElementById('empty-state');
+            if (el) el.remove();
+            var d = document.createElement('div');
+            d.className = 'message user';
+            d.innerHTML = '<div class="msg-body"><div class="msg-bubble">' + escapeHtml(text) + '</div></div>';
+            messages.appendChild(d);
+            scrollBottom();
+        }
+
+        function addAI() {
+            var el = document.getElementById('empty-state');
+            if (el) el.remove();
+            var d = document.createElement('div');
+            d.className = 'message ai';
+            d.innerHTML =
+                '<div class="msg-avatar"><img src="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png" alt="AI"></div>' +
+                '<div class="msg-body">' +
+                '<div class="msg-bubble"><div class="text-content"></div><div class="link-container"></div></div>' +
+                '</div>';
+            messages.appendChild(d);
+            scrollBottom();
+            return {
+                text: d.querySelector('.text-content'),
+                links: d.querySelector('.link-container'),
+                el: d
             };
+        }
 
-            containers.links.innerHTML = '';
-            const foundLinks = new Map();
-
-            let match;
-            while ((match = markdownRegex.exec(fullText)) !== null) {
-                const url = normalize(match[2]);
-                const label = match[1].trim();
-                foundLinks.set(url, label);
-            }
-
-            while ((match = bareHtmlRegex.exec(fullText)) !== null) {
-                const url = normalize(match[1]);
-                if (!foundLinks.has(url)) foundLinks.set(url, null);
-            }
-
-            while ((match = fullUrlRegex.exec(fullText)) !== null) {
-                const url = normalize(match[1]);
-                if (!url.includes('cdnjs') && !url.includes('esm.run') && !foundLinks.has(url)) {
-                    foundLinks.set(url, null);
+        function renderMd(raw) {
+            var blocks = [];
+            var out = raw.replace(/```(\w*)\n?([\s\S]*?)```/g, function (m, l, c) {
+                var ph = '%%CB' + blocks.length + '%%';
+                blocks.push({ lang: l || 'text', code: c.trim() });
+                return ph;
+            });
+            out = out
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+                .replace(/^---$/gm, '<hr>')
+                .replace(/^\d+\. (.*$)/gm, '<li class="o">$1</li>')
+                .replace(/^[\-\*] (.*$)/gm, '<li>$1</li>');
+            var lines = out.split('\n'), html = '', inUl = false, inOl = false;
+            for (var i = 0; i < lines.length; i++) {
+                var ln = lines[i];
+                if (ln.indexOf('<li class="o">') === 0) {
+                    if (!inOl) { html += '<ol>'; inOl = true; }
+                    if (inUl) { html += '</ul>'; inUl = false; }
+                    html += ln.replace(' class="o"', '');
+                } else if (ln.indexOf('<li>') === 0) {
+                    if (!inUl) { html += '<ul>'; inUl = true; }
+                    if (inOl) { html += '</ol>'; inOl = false; }
+                    html += ln;
+                } else {
+                    if (inUl) { html += '</ul>'; inUl = false; }
+                    if (inOl) { html += '</ol>'; inOl = false; }
+                    if (!ln.trim()) continue;
+                    if (ln.indexOf('<h') === 0 || ln.indexOf('<blockquote') === 0 || ln.indexOf('<hr') === 0 || ln.indexOf('%%CB') !== -1) html += ln;
+                    else html += '<p>' + ln + '</p>';
                 }
             }
-
-            const lowText = fullText.toLowerCase();
-            if (lowText.includes('git') || lowText.includes('github') || lowText.includes('source code')) {
-                const url = "https://github.com/MIKLIUM";
-                if (!foundLinks.has(normalize(url))) foundLinks.set(normalize(url), "GitHub Repository");
+            if (inUl) html += '</ul>';
+            if (inOl) html += '</ol>';
+            html = html.replace(/<\/blockquote>\s*<blockquote>/g, '<br>').replace(/<p><\/p>/g, '');
+            for (var j = 0; j < blocks.length; j++) {
+                var b = blocks[j], info = getLangInfo(b.lang), hl;
+                try {
+                    hl = (b.lang !== 'text' && hljs.getLanguage(b.lang)) ? hljs.highlight(b.code, { language: b.lang }).value : hljs.highlightAuto(b.code).value;
+                } catch (e) { hl = escapeHtml(b.code); }
+                var ch = '<div class="code-block-wrapper"><div class="code-block-header"><span class="code-block-lang"><i class="' + info.icon + '"></i> ' + info.name + '</span><button class="code-copy-btn" data-code="' + escapeHtml(b.code) + '"><i class="fas fa-copy"></i> Copy</button></div><pre><code class="hljs language-' + escapeHtml(b.lang) + '">' + hl + '</code></pre></div>';
+                html = html.replace('%%CB' + j + '%%', ch).replace('<p>%%CB' + j + '%%</p>', ch);
             }
-            if (lowText.includes('discord') || lowText.includes('community') || lowText.includes('chat')) {
-                const url = "https://discord.gg/6HUJTXh45t";
-                if (!foundLinks.has(normalize(url))) foundLinks.set(normalize(url), "Join Discord");
-            }
-            if (lowText.includes('doc') || lowText.includes('documentation') || lowText.includes('guide')) {
-                const url = "APIDOCS.html";
-                if (!foundLinks.has(normalize(url))) foundLinks.set(normalize(url), "API Documentation");
-            }
+            return html;
+        }
 
-            foundLinks.forEach((label, url) => {
-                const siteKey = Object.keys(SITE_LINKS).find(k => normalize(k) === url) || url;
-                const info = SITE_LINKS[siteKey] || {
-                    name: label || (url.includes('.html') ? url.replace('.html', '').replace('-', ' ') : "Learn More"),
-                    icon: "fas fa-external-link-alt"
-                };
-
-                const card = document.createElement('a');
-                card.className = 'link-card';
-                card.href = siteKey;
-                if (siteKey.startsWith('http')) card.target = '_blank';
-                else card.target = '_top';
-
-                card.innerHTML = `
-                    <i class="${info.icon}"></i>
-                    <span>${info.name}</span>
-                    <i class="fas fa-chevron-right arrow"></i>
-                `;
-                containers.links.appendChild(card);
+        function extractLinks(text, container) {
+            var mdRe = /\[([^\]]+)\]\(([^)]+)\)/g, htmlRe = /(?:\s|^)([\w-]+\.html)(?:\b)/gi, urlRe = /(https?:\/\/[^\s)\]<]+)/gi;
+            var norm = function (u) { var r = u.trim().replace(/\/$/, ''); return r.toLowerCase().endsWith('.html') ? r.toLowerCase() : r; };
+            container.innerHTML = '';
+            var found = new Map(), m;
+            while ((m = mdRe.exec(text)) !== null) found.set(norm(m[2]), m[1].trim());
+            while ((m = htmlRe.exec(text)) !== null) { var u = norm(m[1]); if (!found.has(u)) found.set(u, null); }
+            while ((m = urlRe.exec(text)) !== null) { var u2 = norm(m[1]); if (!u2.includes('cdnjs') && !u2.includes('esm.run') && !u2.includes('googleapis') && !found.has(u2)) found.set(u2, null); }
+            var low = text.toLowerCase();
+            [
+                { kw: ['github', 'source code', 'repo'], url: 'https://github.com/MIKLIUM-Team/MIKLIUM', lb: 'GitHub' },
+                { kw: ['discord', 'community', 'server'], url: 'https://discord.gg/6HUJTXh45t', lb: 'Discord' },
+                { kw: ['documentation', 'api doc', 'docs'], url: 'APIDOCS.html', lb: 'API Docs' },
+                { kw: ['get started', 'getting started', 'tutorial'], url: 'GetStarted.html', lb: 'Get Started' },
+                { kw: ['playground', 'test api'], url: 'playground.html', lb: 'Playground' },
+                { kw: ['project', 'showcase'], url: 'projects.html', lb: 'Projects' }
+            ].forEach(function (c) {
+                if (c.kw.some(function (k) { return low.includes(k); })) { var n = norm(c.url); if (!found.has(n)) found.set(n, c.lb); }
             });
+            if (!found.size) return;
+            found.forEach(function (label, url) {
+                var sk = Object.keys(SITE_LINKS).find(function (k) { return norm(k) === url; }) || url;
+                var info = SITE_LINKS[sk] || { name: label || 'Learn More', icon: 'fas fa-external-link-alt', desc: url.length > 45 ? url.substring(0, 45) + '...' : url };
+                var a = document.createElement('a');
+                a.className = 'link-card';
+                a.href = sk;
+                a.target = sk.indexOf('http') === 0 ? '_blank' : '_self';
+                a.innerHTML = '<div class="link-left"><div class="link-icon"><i class="' + info.icon + '"></i></div><div class="link-info"><span class="link-name">' + info.name + '</span><span class="link-desc">' + (info.desc || '') + '</span></div></div><i class="fas fa-chevron-right link-arrow"></i>';
+                container.appendChild(a);
+            });
+        }
 
-            let html = fullText
-                .replace(markdownRegex, '<span class="text-link">$1</span>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/^\* (.*$)/gm, '<li>$1</li>')
-                .replace(/<li>(.*)<\/li>/gs, '<ul>$&</ul>')
-                .replace(/<\/ul><ul>/g, '')
-                .replace(/\n/g, '<br>');
-
-            containers.text.innerHTML = html;
+        function bindCopy(container) {
+            container.querySelectorAll('.code-copy-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var code = btn.getAttribute('data-code').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
+                    navigator.clipboard.writeText(code).then(function () {
+                        btn.classList.add('copied');
+                        btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                        showToast('Code copied');
+                        setTimeout(function () { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1500);
+                    });
+                });
+            });
         }
 
         async function handleSend() {
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            userInput.value = '';
-            appendMessage('user', text);
-
-            const aiElements = appendMessage('ai', '');
-            const typing = document.createElement('div');
-            typing.className = 'typing-indicator';
-            typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-            aiElements.text.appendChild(typing);
-
-            scrollToBottom();
-
+            var text = chatInput.value.trim();
+            if (!text || isProcessing) return;
+            isProcessing = true;
+            chatInput.value = '';
+            sendBtn.disabled = true;
+            sendBtn.classList.add('sending');
+            sendBtn.querySelector('i').className = 'fas fa-spinner';
+            addUser(text);
+            conversationHistory.push({ role: 'user', content: text });
+            var ai = addAI();
+            var dots = document.createElement('div');
+            dots.className = 'typing-dots';
+            dots.innerHTML = '<span></span><span></span><span></span>';
+            ai.text.appendChild(dots);
+            scrollBottom();
             try {
-                const response = await fetch('https://miklium.vercel.app/api/chatbot', {
+                var resp = await fetch('https://miklium.vercel.app/api/chatbot', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
+                    body: JSON.stringify({ message: text, history: conversationHistory.slice(-12) })
                 });
-
-                if (!response.ok) throw new Error('API request failed');
-
-                const data = await response.json();
-                const responseText = data.response;
-
-                if (typing.parentNode) aiElements.text.removeChild(typing);
-
-                await new Promise(resolve => setTimeout(resolve, 100));
-                parseAndRenderLinks(responseText, aiElements);
-                scrollToBottom();
-
+                if (!resp.ok) throw new Error('API ' + resp.status);
+                var data = await resp.json();
+                var reply = data.response || 'I received your message but got an empty response. Please try again.';
+                conversationHistory.push({ role: 'assistant', content: reply });
+                if (dots.parentNode) dots.remove();
+                await new Promise(function (r) { setTimeout(r, 60); });
+                ai.text.innerHTML = renderMd(reply);
+                extractLinks(reply, ai.links);
+                bindCopy(ai.text);
+                scrollBottom();
             } catch (err) {
-                if (typing.parentNode) aiElements.text.removeChild(typing);
-                aiElements.text.innerText = "Sorry, I ran into an issue processing that. Please try again.";
+                if (dots.parentNode) dots.remove();
+                ai.text.innerHTML = '<p>Sorry, something went wrong. Please try again.</p>';
                 console.error(err);
+            } finally {
+                isProcessing = false;
+                sendBtn.classList.remove('sending');
+                sendBtn.querySelector('i').className = 'fas fa-arrow-up';
+                sendBtn.disabled = !chatInput.value.trim();
             }
         }
 
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
-
-        init();
+        chatInput.focus();
     </script>
 </body>
 

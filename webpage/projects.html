@@ -7,11 +7,11 @@
   <meta name="description" content="Featured community projects powered with MIKLIUM">
   <meta property="og:title" content="Featured Projects - MIKLIUM">
   <meta property="og:description" content="Featured community projects powered with MIKLIUM">
-  <meta property="og:image" content="https://raw.githubusercontent.com/MIKLIUM/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+  <meta property="og:image" content="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Preview.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0155A1">
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/MIKLIUM/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/MIKLIUM/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -108,7 +108,7 @@
         <li><a href="support.html" data-nav="support">Support</a></li>
         <li class="nav-icons">
           <a href="https://discord.gg/6HUJTXh45t" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
-          <a href="https://github.com/MIKLIUM" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+          <a href="https://github.com/MIKLIUM-Team" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
         </li>
       </ul>
     </div>
@@ -121,7 +121,7 @@
       <a href="support.html" data-nav="support"><i class="fas fa-headset"></i> Support</a>
       <div class="nav-mobile-icons">
         <a href="https://discord.gg/6HUJTXh45t" target="_blank"><i class="fab fa-discord"></i></a>
-        <a href="https://github.com/MIKLIUM" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://github.com/MIKLIUM-Team" target="_blank"><i class="fab fa-github"></i></a>
       </div>
     </div>
   </nav>
@@ -132,7 +132,7 @@
       <p>Community projects powered with MIKLIUM</p>
     </div>
     <div class="submit-cta">
-      <a href="https://github.com/MIKLIUM/MIKLIUM/issues/new?template=project-submission.yml" target="_blank" class="btn btn-primary"><i class="fas fa-plus"></i> Submit Your Project</a>
+      <a href="https://github.com/MIKLIUM-Team/MIKLIUM/issues/new?template=project-submission.yml" target="_blank" class="btn btn-primary"><i class="fas fa-plus"></i> Submit Your Project</a>
     </div>
     <div id="projects-container">
       <div class="loading">
@@ -168,7 +168,7 @@
         var container = document.getElementById("projects-container");
         var countBadge = document.getElementById("project-count");
         try {
-          var res = await fetch("https://raw.githubusercontent.com/MIKLIUM/MIKLIUM/refs/heads/main/FEATURED_PROJECTS.md");
+          var res = await fetch("https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/FEATURED_PROJECTS.md");
           if (!res.ok) throw new Error("HTTP " + res.status);
           var md = await res.text();
 
