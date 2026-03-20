@@ -435,41 +435,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       marked.use({ renderer: renderer });
       el.innerHTML = marked.parse(processedMd);
-      
-      (function() {
-          var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-          var textNodes = [];
-          var node;
-          while (node = walker.nextNode()) {
-              if (node.parentNode.closest(".code-block-wrapper")) continue;
-              if (node.parentNode.closest("a")) continue;
-              if (node.parentNode.closest(".link-copy-wrapper")) continue;
-              if (node.parentNode.tagName === "CODE" && node.parentNode.closest("pre")) continue;
-              if (/https?:\/\//.test(node.textContent)) {
-                  textNodes.push(node);
-              }
-          }
-          textNodes.forEach(function(textNode) {
-              var text = textNode.textContent;
-              var regex = /(https?:\/\/[^\s<"'`]+)/g;
-              var parts = text.split(regex);
-              if (parts.length <= 1) return;
-              var frag = document.createDocumentFragment();
-              parts.forEach(function(part) {
-                  if (/^https?:\/\//.test(part)) {
-                      var cleanUrl = part.replace(/[.,;:!?]+$/, "");
-                      var trailing = part.substring(cleanUrl.length);
-                      var codeEl = document.createElement("code");
-                      codeEl.textContent = cleanUrl;
-                      frag.appendChild(codeEl);
-                      if (trailing) frag.appendChild(document.createTextNode(trailing));
-                  } else {
-                      frag.appendChild(document.createTextNode(part));
-                  }
-              });
-              textNode.parentNode.replaceChild(frag, textNode);
-          });
-      })();
+
+      var inlineCodes = el.querySelectorAll("code");
+      inlineCodes.forEach(function(codeEl) {
+        if (codeEl.closest(".code-block-wrapper")) return;
+        if (codeEl.closest("pre")) return;
+        var text = codeEl.textContent;
+        var match = text.match(/^(https?:\/\/[^\s]+)/);
+        if (match) {
+          var url = match[1].replace(/[.,;:!?]+$/, "");
+          codeEl.setAttribute("data-url", url);
+        }
+      });
 
       el.addEventListener("click", function(e) {
         var copyBtn = e.target.closest(".code-copy-btn");
@@ -487,7 +464,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
           return;
         }
-      
+
         var linkCopyBtn = e.target.closest(".link-copy-btn");
         if (linkCopyBtn) {
           var url = linkCopyBtn.getAttribute("data-url");
@@ -502,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
           return;
         }
-      
+
         var anyLink = e.target.closest("a");
         if (anyLink) {
           var href = anyLink.getAttribute("href");
@@ -517,7 +494,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
       });
-      
+
       setTimeout(function() {
         var allLinks = el.getElementsByTagName("a");
         for (var i = allLinks.length - 1; i >= 0; i--) {
@@ -529,14 +506,14 @@ document.addEventListener("DOMContentLoaded", function () {
           if (!href) continue;
           if (href.charAt(0) === "#") continue;
           if (href.indexOf("://") === -1 && href.indexOf("//") !== 0) continue;
-      
+
           var copyBtn = document.createElement("button");
           copyBtn.className = "link-copy-btn";
           copyBtn.setAttribute("data-url", href);
           copyBtn.title = "Copy link";
           copyBtn.type = "button";
           copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-      
+
           var parent = link.parentNode;
           if (link.closest("table")) {
             if (link.nextSibling) {
@@ -552,30 +529,27 @@ document.addEventListener("DOMContentLoaded", function () {
             wrapper.appendChild(copyBtn);
           }
         }
-      
-        var allCodes = el.querySelectorAll("code");
+
+        var allCodes = el.querySelectorAll("code[data-url]");
         for (var j = 0; j < allCodes.length; j++) {
           var codeEl = allCodes[j];
-          if (codeEl.closest(".code-block-wrapper")) continue;
           if (codeEl.closest(".link-copy-wrapper")) continue;
-          if (codeEl.querySelector(".link-copy-btn")) continue;
-          var codeText = codeEl.textContent.trim();
-          if (!/^https?:\/\/\S+$/.test(codeText)) continue;
-      
+          var codeUrl = codeEl.getAttribute("data-url");
+
           var wrapper = document.createElement("span");
           wrapper.className = "link-copy-wrapper";
           codeEl.parentNode.insertBefore(wrapper, codeEl);
           wrapper.appendChild(codeEl);
           var cb = document.createElement("button");
           cb.className = "link-copy-btn";
-          cb.setAttribute("data-url", codeText);
+          cb.setAttribute("data-url", codeUrl);
           cb.title = "Copy link";
           cb.type = "button";
           cb.innerHTML = '<i class="fas fa-copy"></i>';
           wrapper.appendChild(cb);
         }
       }, 100);
-      
+
       if (location.hash) {
         setTimeout(function() {
           var target = document.querySelector(location.hash);
