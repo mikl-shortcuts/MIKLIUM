@@ -487,7 +487,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
           return;
         }
-
+      
         var linkCopyBtn = e.target.closest(".link-copy-btn");
         if (linkCopyBtn) {
           var url = linkCopyBtn.getAttribute("data-url");
@@ -502,21 +502,22 @@ document.addEventListener("DOMContentLoaded", function () {
           });
           return;
         }
-
-      var anyLink = e.target.closest("a");
-      if (anyLink) {
+      
+        var anyLink = e.target.closest("a");
+        if (anyLink) {
           var href = anyLink.getAttribute("href");
           if (href && href.charAt(0) === "#") {
-              e.preventDefault();
-              var target = document.getElementById(href.substring(1));
-              if (target) {
-                  history.pushState(null, null, href);
-                  scrollToWithOffset(target);
-              }
-              return;
+            e.preventDefault();
+            var target = document.getElementById(href.substring(1));
+            if (target) {
+              history.pushState(null, null, href);
+              scrollToWithOffset(target);
+            }
+            return;
           }
-      }
-
+        }
+      });
+      
       setTimeout(function() {
         var allLinks = el.getElementsByTagName("a");
         for (var i = allLinks.length - 1; i >= 0; i--) {
@@ -574,9 +575,9 @@ document.addEventListener("DOMContentLoaded", function () {
           wrapper.appendChild(cb);
         }
       }, 100);
-
+      
       if (location.hash) {
-        setTimeout(function () {
+        setTimeout(function() {
           var target = document.querySelector(location.hash);
           if (target) scrollToWithOffset(target);
         }, 200);
