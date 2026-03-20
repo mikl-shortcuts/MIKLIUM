@@ -435,6 +435,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
       marked.use({ renderer: renderer });
       el.innerHTML = marked.parse(processedMd);
+      
+      (function() {
+          var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+          var textNodes = [];
+          var node;
+          while (node = walker.nextNode()) {
+              if (node.parentNode.closest(".code-block-wrapper")) continue;
+              if (node.parentNode.closest("a")) continue;
+              if (node.parentNode.closest(".link-copy-wrapper")) continue;
+              if (node.parentNode.tagName === "CODE" && node.parentNode.closest("pre")) continue;
+              if (/https?:\/\//.test(node.textContent)) {
+                  textNodes.push(node);
+              }
+          }
+          textNodes.forEach(function(textNode) {
+              var text = textNode.textContent;
+              var regex = /(https?:\/\/[^\s<"'`]+)/g;
+              var parts = text.split(regex);
+              if (parts.length <= 1) return;
+              var frag = document.createDocumentFragment();
+              parts.forEach(function(part) {
+                  if (/^https?:\/\//.test(part)) {
+                      var cleanUrl = part.replace(/[.,;:!?]+$/, "");
+                      var trailing = part.substring(cleanUrl.length);
+                      var codeEl = document.createElement("code");
+                      codeEl.textContent = cleanUrl;
+                      frag.appendChild(codeEl);
+                      if (trailing) frag.appendChild(document.createTextNode(trailing));
+                  } else {
+                      frag.appendChild(document.createTextNode(part));
+                  }
+              });
+              textNode.parentNode.replaceChild(frag, textNode);
+          });
+      })();
 
       el.addEventListener("click", function(e) {
         var copyBtn = e.target.closest(".code-copy-btn");
@@ -468,20 +503,19 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        var anchorLink = e.target.closest("a.anchor-link");
-        if (anchorLink) {
-          var href = anchorLink.getAttribute("href");
+      var anyLink = e.target.closest("a");
+      if (anyLink) {
+          var href = anyLink.getAttribute("href");
           if (href && href.charAt(0) === "#") {
-            e.preventDefault();
-            var target = document.getElementById(href.substring(1));
-            if (target) {
-              history.pushState(null, null, href);
-              scrollToWithOffset(target);
-            }
+              e.preventDefault();
+              var target = document.getElementById(href.substring(1));
+              if (target) {
+                  history.pushState(null, null, href);
+                  scrollToWithOffset(target);
+              }
+              return;
           }
-          return;
-        }
-      });
+      }
 
       setTimeout(function() {
         var allLinks = el.getElementsByTagName("a");
