@@ -8,22 +8,22 @@ Architecture, conventions, and templates for the MIKLIUM open-source API platfor
 - [Project Layout](#project-layout)
 - [How Everything Connects](#how-everything-connects)
 - [API Folder Anatomy](#api-folder-anatomy)
-  - [Required Files](#required-files)
-  - [Optional Files](#optional-files)
-  - [Response Contract](#response-contract)
-  - [File Templates](#file-templates)
-    - [Node.js API `index.js`](#nodejs-api-indexjs)
-    - [Python API `index.py`](#python-api-indexpy)
-    - [Config `config.toml`](#config-configtoml)
-      - [Config `config.toml` Detailed Reference](#config-configtoml-detailed-reference)
-    - [`README.md` Template](#readmemd-template)
+- [Required Files](#required-files)
+- [Optional Files](#optional-files)
+- [Response Contract](#response-contract)
+- [File Templates](#file-templates)
+- [Node.js API `index.js`](#nodejs-api-indexjs)
+- [Python API `index.py`](#python-api-indexpy)
+- [Config `config.toml`](#config-configtoml)
+- [Config `config.toml` Detailed Reference](#config-configtoml-detailed-reference)
+- [`README.md` Template](#readmemd-template)
 - [Routing](#routing)
 - [CI/CD & Automation](#cicd--automation)
-  - [Workflows](#workflows)
-  - [Auto-Generated Files](#auto-generated-files)
+- [Workflows](#workflows)
+- [Auto-Generated Files](#auto-generated-files)
 - [Conventions & Rules](#conventions--rules)
-  - [Naming](#naming)
-  - [Rules for APIs Development](#rules-for-apis-development)
+- [Naming](#naming)
+- [Rules for APIs Development](#rules-for-apis-development)
 
 ---
 
@@ -66,11 +66,12 @@ MIKLIUM/
 │   │   ├── README.md ← documentation
 │   │   ├── config.toml ← configuration  for playground and tests
 │   │   └── ... ← any other files you need
+│   ├── models/
+│   │   └── miklium-lm-nano/ ← standalone ML model project
 │   └── 404.js ← fallback for unknown routes
 │
 ├── beta/api/ ← experimental APIs and tools
 ├── webpage/ ← static site (GitHub Pages)
-├── miklium-lm-nano/ ← standalone ML model project
 │
 ├── .github/
 │   ├── workflows/ ← CI/CD workflow definitions
@@ -201,6 +202,7 @@ async function handler(request, response) {
     // Parse input
     // Support both GET (query params) and POST (JSON body).
     // You can remove the method you don't need.
+    // You can also use other methods like PUT, DELETE, etc.
 
     let query; // Required parameter
     let limit; // Optional parameter with default

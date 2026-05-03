@@ -1,0 +1,40 @@
+[playground]
+name = "Miklium LLM"
+endpoint = "https://miklium.vercel.app/api/responses"
+path = "/api/responses"
+method = "POST"
+docs_anchor = "miklium-llm-responses-api-documentation"
+
+[[playground.inputs]]
+id = "input"
+label = "Prompt"
+type = "textarea"
+placeholder = "Write a short bedtime story about a unicorn."
+required = true
+
+[[playground.inputs]]
+id = "model"
+label = "Model"
+type = "select"
+options = ["miklium-lm-nano"]
+default = "miklium-lm-nano"
+
+[test]
+endpoint = "/api/responses"
+method = "POST"
+
+[[test.cases]]
+name = "Valid inference returns output_text"
+expected_key = "output_text"
+
+[test.cases.payload]
+model = "miklium-lm-nano"
+input = "Hello"
+
+[[test.cases]]
+name = "Missing input returns error"
+expected_key = "error"
+
+[test.cases.payload]
+model = "miklium-lm-nano"
+input = ""
