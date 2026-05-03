@@ -11,11 +11,11 @@ To maintain the quality and reliability of our APIs, every contribution **must**
 > Every change must be thoroughly tested in your local environment and, if applicable, in a staging environment. Do not submit code that has not been verified to work as expected.
 >
 > **2. Every New API Must Contain `REAMDE.md` and `config.toml`.**
-> If you are adding a new API endpoint, you must add a corresponding `README.md` with documentation and `config.toml` for MIKLIUM API playground configuration and Testing Workflow. Read [MIKLIUM Project Structure](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/STRUCTURE.md) for more info.
+> If you are adding a new API endpoint, you must add a corresponding `README.md` with documentation and `config.toml` for MIKLIUM API playground configuration and Testing Workflow. Read [MIKLIUM Project Structure](STRUCTURE.md) for more info.
 
 ## How to Contribute
 
-1.  **Research the Structure of Repository:** [MIKLIUM Project Structure](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/STRUCTURE.md).
+1.  **Research the Structure of Repository:** [MIKLIUM Project Structure](STRUCTURE.md).
 1.  **Fork the Repository**: Create a personal fork of the MIKLIUM repository on GitHub.
 2.  **Create a Branch**: Develop your changes on a new branch. Give it a descriptive name related to the feature or fix.
 3.  **Develop & Test**: Implement your changes and test them thoroughly.
@@ -25,6 +25,6 @@ To maintain the quality and reliability of our APIs, every contribution **must**
 
 - Keep code clean, well-commented, and efficient.
 - Follow the existing project structure, style and naming conventions.
-- Don't change `README.md` and `APIDOCS.md` in the `root` directory: they are updates automatically using a workflows.
+- Don't change `README.md` in the `root` directory or `APIDOCS.md` in the `docs/` directory: they are updated automatically using workflows.
 
 Thank you for helping us make MIKLIUM better for everyone! As a token of our gratitude, we will publicly thank you and display your username in our release notes and in a special thanks section for helping with the development. Your contributions make a real difference!

@@ -168,7 +168,7 @@
         var container = document.getElementById("projects-container");
         var countBadge = document.getElementById("project-count");
         try {
-          var res = await fetch("https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/FEATURED_PROJECTS.md");
+          var res = await fetch("https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/docs/FEATURED_PROJECTS.md");
           if (!res.ok) throw new Error("HTTP " + res.status);
           var md = await res.text();
 

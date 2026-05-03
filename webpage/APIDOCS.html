@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var el = document.getElementById("api-content");
     var countBadge = document.getElementById("api-count");
     try {
-      var res = await fetch("https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/APIDOCS.md");
+      var res = await fetch("https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/docs/APIDOCS.md");
       if (!res.ok) throw new Error("HTTP " + res.status);
       var md = await res.text();
       var processedMd = md.replace(/^# MIKLIUM API Documentation\s*(\r\n|\r|\n)/, "");

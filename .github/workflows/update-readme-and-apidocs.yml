@@ -33,7 +33,7 @@ jobs:
 
           root = 'api'
           exclude = 'beta'
-          out = 'APIDOCS.md'
+          out = 'docs/APIDOCS.md'
           docs = []
 
           def get_slug(text):
@@ -143,8 +143,8 @@ jobs:
           fp_table_start = '<!-- FEATURED_PROJECTS_TABLE_START -->'
           fp_table_end = '<!-- FEATURED_PROJECTS_TABLE_END -->'
 
-          if os.path.exists('FEATURED_PROJECTS.md') and readme_feat_start in readme and readme_feat_end in readme:
-              with open('FEATURED_PROJECTS.md', 'r', encoding='utf-8') as f:
+          if os.path.exists('docs/FEATURED_PROJECTS.md') and readme_feat_start in readme and readme_feat_end in readme:
+              with open('docs/FEATURED_PROJECTS.md', 'r', encoding='utf-8') as f:
                   fp_content = f.read()
 
               if fp_table_start in fp_content and fp_table_end in fp_content:
@@ -162,9 +162,9 @@ jobs:
                       table += '\n' + row
 
                   if total > 3:
-                      table += f'\n\n> **{total} projects total!** [See all projects →](FEATURED_PROJECTS.md)'
+                      table += f'\n\n> **{total} projects total!** [See all projects →](docs/FEATURED_PROJECTS.md)'
                   else:
-                      table += '\n\n[See all projects →](FEATURED_PROJECTS.md)'
+                      table += '\n\n[See all projects →](docs/FEATURED_PROJECTS.md)'
 
                   feat_pattern = re.escape(readme_feat_start) + r'.*?' + re.escape(readme_feat_end)
                   feat_replacement = readme_feat_start + '\n' + table + '\n' + readme_feat_end
@@ -182,6 +182,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update APIDOCS.md and README.md"
-          file_pattern: "APIDOCS.md README.md"
+          file_pattern: "docs/APIDOCS.md README.md docs/FEATURED_PROJECTS.md"
         env:
           GITHUB_TOKEN: ${{ secrets.PROJECT_TOKEN }}

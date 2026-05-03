@@ -37,7 +37,7 @@ flowchart LR
     A("<b>api/</b><br/>Serverless functions"):::api --> V(("Vercel")):::deploy
     B("<b>webpage/</b><br/>Static website"):::web --> G(("GitHub<br/>Pages")):::deploy
     C("<b>.github/</b><br/>CI/CD & templates"):::ci --> GA(("GitHub<br/>Actions")):::deploy
-    D("<b>Root docs</b><br/>README, LICENSE..."):::docs --> GH(("GitHub<br/>Repo")):::deploy
+    D("<b>docs/</b><br/>STRUCTURE, SECURITY..."):::docs --> GH(("GitHub<br/>Repo")):::deploy
 
     classDef api fill:#1a3d2e,stroke:#4ade80,color:#fff,rx:12
     classDef web fill:#1a2d4d,stroke:#60a5fa,color:#fff,rx:12
@@ -78,12 +78,19 @@ MIKLIUM/
 │   ├── scripts/ ← scripts for CI/CD workflows
 │   └── ISSUE_TEMPLATE/ ← issue forms
 │
-├── vercel.json ← routing & CORS
-├── APIDOCS.md ← documentation for all APIs
+├── docs/
+│   ├── APIDOCS.md ← documentation for all APIs
+│   ├── FEATURED_PROJECTS.md ← community projects
+│   ├── STRUCTURE.md ← project architecture (this file)
+│   ├── SECURITY.md ← security policy
+│   ├── CONTRIBUTING.md ← how to contribute
+│   ├── CODE_OF_CONDUCT.md ← community standards
+│   ├── TODO.md ← roadmap
+│   └── design_guidelines.html ← visual style guide
+│
 ├── README.md ← main repository description
-├── FEATURED_PROJECTS.md ← community projects
 ├── LICENSE.md ← MIT
-└── ...  ← other healthy files and more
+└── vercel.json ← routing & CORS
 ```
 
 ---

@@ -5,7 +5,7 @@
   
   <a href="https://github.com/MIKLIUM-Team/MIKLIUM/stargazers"><img alt="GitHub repository stars" src="https://img.shields.io/github/stars/MIKLIUM-Team/MIKLIUM?style=for-the-badge&color=FFD74D"></a> <a href="https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/LICENSE.md"><img alt="GitHub License" src="https://img.shields.io/github/license/MIKLIUM-Team/MIKLIUM?style=for-the-badge"></a> <a href="https://discord.gg/6HUJTXh45t"><img alt="Our discord" src="https://img.shields.io/discord/1409942072127000701?style=for-the-badge&label=discord&color=586AEA"></a>
 
-[Website](https://miklium-team.github.io/MIKLIUM/) • [Docs](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/APIDOCS.md) • [Announcements](https://github.com/MIKLIUM-Team/MIKLIUM/discussions/categories/announcements) • [Discord](https://discord.gg/6HUJTXh45t)
+[Website](https://miklium-team.github.io/MIKLIUM/) • [Docs](docs/APIDOCS.md) • [Announcements](https://github.com/MIKLIUM-Team/MIKLIUM/discussions/categories/announcements) • [Discord](https://discord.gg/6HUJTXh45t)
 </div>
 
 ---
@@ -16,7 +16,7 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 
 * **[Our Website](https://miklium-team.github.io/MIKLIUM/)**
 * **[Our Discord server](https://discord.gg/d3txS4q8)**
-* **[Contribution Guidelines](CONTRIBUTING.md)**
+* **[Contribution Guidelines](docs/CONTRIBUTING.md)**
 
 ## Currently Available APIs:
 > **<!-- API_COUNT_START -->6<!-- API_COUNT_END --> APIs are available now:**
@@ -30,7 +30,7 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
   - [YouTube Transcription API Documentation](api/youtube-transcript/README.md)
 <!-- API_LIST_END -->
 
-**[Full API Documentation](APIDOCS.md)** is available for developers who want to integrate with our services.
+**[Full API Documentation](docs/APIDOCS.md)** is available for developers who want to integrate with our services.
 
 ## Featured Projects Powered with MIKLIUM 
 > **<!-- README_FEATURED_COUNT_START -->3<!-- README_FEATURED_COUNT_END --> community projects powered with <a href="https://github.com/MIKLIUM/MIKLIUM">MIKLIUM</a> are featured:**
@@ -42,7 +42,7 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 | [Nuvole AI](https://routinehub.co/shortcut/18431/) | The most convenient and incredibly powerful AI shortcut without API keys or Apps, powered with MIKLIUM Search and YouTube Transcript. | [@mikl-shortcuts](https://github.com/mikl-shortcuts) |
 | [Nuvole AI Lite](https://routinehub.co/shortcut/18428/) | The most convenient AI Shortcut without API keys or Apps, powered with GPT-5.2 and MIKLIUM Internet Search API. | [@mikl-shortcuts](https://github.com/mikl-shortcuts) |
 
-[See all projects →](FEATURED_PROJECTS.md)
+[See all projects →](docs/FEATURED_PROJECTS.md)
 <!-- FEATURED_PROJECTS_END -->
 
 ## Status of Deployments and Tests
@@ -52,7 +52,7 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 
 ## Contribute
 
-Information describing how to contribute can be found in the [`Contributing to MIKLIUM`](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/CONTRIBUTING.md).
+Information describing how to contribute can be found in the [`Contributing to MIKLIUM`](docs/CONTRIBUTING.md).
 
 ## Stats
 
