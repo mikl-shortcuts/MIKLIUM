@@ -5,9 +5,10 @@
  - [Navigation](#navigation)
  - [About MIKLIUM APIs](#about-miklium-apis)
 ### APIs Documentations
-> **5 APIs are avaiable now:**
+> **6 APIs are avaiable now:**
  - [Chatbot API Documentation](#chatbot-api-documentation)
  - [Python Sandbox API Documentation](#python-sandbox-api-documentation)
+ - [Miklium LLM Responses API Documentation](#miklium-llm-responses-api-documentation)
  - [Search API Documentation](#search-api-documentation)
  - [Apple Shortcuts Data API Documentation](#apple-shortcuts-data-api-documentation)
  - [YouTube Transcription API Documentation](#youtube-transcription-api-documentation)
@@ -493,6 +494,129 @@ Unfortunately, the Python Sandbox is not designed to run very complex or potenti
 
 
 ---
+# Miklium LLM Responses API Documentation
+
+## Navigation
+**[Back to MIKLIUM APIs navigation](#navigation)**
+
+
+- [Miklium LLM Responses API Documentation](#miklium-llm-responses-api-documentation)
+  - [About MIKLIUM Responses](#about-miklium-responses)
+  - [Request Body](#request-body-2)
+    - [POST Method](#post-method-2)
+  - [Code Examples](#code-examples-2)
+    - [JavaScript (OpenAI-like SDK Style)](#javascript-openai-like-sdk-style)
+  - [API Responses](#api-responses-2)
+    - [Success](#success-2)
+    - [Error](#error-2)
+
+## About MIKLIUM Responses
+
+This API provides access to the Miklium LLM models, starting with **miklium-lm-nano**. It is designed to be easy to use and follows a clean request structure similar to the OpenAI SDK.
+
+## Request Body
+
+Link: `https://miklium.vercel.app/api/responses`
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `input` | Yes | String | The prompt text to send to the model. |
+| `model` | No | String | The model ID (currently only `miklium-lm-nano`). |
+
+### POST Method
+
+```json
+{
+  "model": "miklium-lm-nano",
+  "input": "Write a short bedtime story about a unicorn."
+}
+```
+
+## Code Examples
+
+### JavaScript (OpenAI-like SDK Style)
+
+You can use the following pattern to call the API in a way that feels like the OpenAI SDK:
+
+```javascript
+class MikliumAI {
+  constructor(config = {}) {
+    this.baseURL = config.baseURL || "https://miklium.vercel.app/api/responses";
+  }
+
+  get responses() {
+    return {
+      create: async (data) => {
+        const res = await fetch(this.baseURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+    };
+  }
+}
+
+const client = new MikliumAI();
+
+const response = await client.responses.create({
+  model: "miklium-lm-nano",
+  input: "Write a short bedtime story about a unicorn.",
+});
+
+console.log(response.output_text);
+```
+
+### Python (Requests)
+
+```python
+import requests
+
+r = requests.post("https://miklium.vercel.app/api/responses",
+                   json={"model": "miklium-lm-nano", "input": "Write a short bedtime story about a unicorn."})
+print(r.json()["output_text"])
+```
+
+## API Responses
+
+### Success
+
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `true` |
+| `model` | `String`, The model used |
+| `output_text` | `String`, The generated response |
+| `usage` | `Object`, Token usage information |
+
+```json
+{
+  "success": true,
+  "model": "miklium-lm-nano",
+  "output_text": "Once upon a time, in a land of rainbows...",
+  "usage": {
+    "total_tokens": 42
+  }
+}
+```
+
+### Error
+
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `false` |
+| `error` | `String`, Error message |
+
+```json
+{
+  "success": false,
+  "error": "Missing 'input' field"
+}
+```
+
+
+---
 # Search API Documentation
 
 ## Navigation
@@ -500,15 +624,15 @@ Unfortunately, the Python Sandbox is not designed to run very complex or potenti
 
 
 - [Search API Documentation](#search-api-documentation)
-    - [Navigation](#navigation-3)
+    - [Navigation](#navigation-4)
     - [About MIKLIUM Search API](#about-miklium-search-api)
-    - [Request Body](#request-body-2)
+    - [Request Body](#request-body-3)
         - [GET Method](#get-method-1)
-        - [POST Method](#post-method-2)
-    - [Code Examples](#code-examples-2)
-    - [API Responses](#api-responses-2)
-        - [Success](#success-2)
-        - [Error](#error-2)
+        - [POST Method](#post-method-3)
+    - [Code Examples](#code-examples-3)
+    - [API Responses](#api-responses-3)
+        - [Success](#success-3)
+        - [Error](#error-3)
     - [Additional Information](#additional-information)
         - [Types of the Information](#types-of-the-information)
         - [Choosing the Right Information Format](#choosing-the-right-information-format)
@@ -708,15 +832,15 @@ As you have already noticed, the API returns two types of information: `short` a
 
 
 - [Apple Shortcuts Data API Documentation](#apple-shortcuts-data-api-documentation)
-    - [Navigation](#navigation-4)
+    - [Navigation](#navigation-5)
     - [About MIKLIUM Apple Shortcuts Data API](#about-miklium-apple-shortcuts-data-api)
-    - [Request Body](#request-body-3)
+    - [Request Body](#request-body-4)
         - [GET Method](#get-method-2)
-        - [POST Method](#post-method-3)
-    - [Code Examples](#code-examples-3)
-    - [API Responses](#api-responses-3)
-        - [Success](#success-3)
-        - [Error](#error-3)
+        - [POST Method](#post-method-4)
+    - [Code Examples](#code-examples-4)
+    - [API Responses](#api-responses-4)
+        - [Success](#success-4)
+        - [Error](#error-4)
     - [What Services Does This API Use?](#what-services-does-this-api-use-1)
 
 ## About MIKLIUM Apple Shortcuts Data API
@@ -947,15 +1071,15 @@ curl -X POST https://miklium.vercel.app/api/shortcut-info \
 
 
 - [YouTube Transcription API Documentation](#youtube-transcription-api-documentation)
-    - [Navigation](#navigation-5)
+    - [Navigation](#navigation-6)
     - [About MIKLIUM YouTube Transcription API](#about-miklium-youtube-transcription-api)
-    - [Request Body](#request-body-4)
+    - [Request Body](#request-body-5)
         - [GET Method](#get-method-3)
-        - [POST Method](#post-method-4)
-    - [Code Examples](#code-examples-4)
-    - [API Responses](#api-responses-4)
-        - [Success](#success-4)
-        - [Error](#error-4)
+        - [POST Method](#post-method-5)
+    - [Code Examples](#code-examples-5)
+    - [API Responses](#api-responses-5)
+        - [Success](#success-5)
+        - [Error](#error-5)
     - [What Services Does This API Use?](#what-services-does-this-api-use-2)
 
 ## About MIKLIUM YouTube Transcription API
