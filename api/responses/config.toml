@@ -38,3 +38,11 @@ expected_key = "error"
 [test.cases.payload]
 model = "miklium-lm-nano"
 input = ""
+
+[[test.cases]]
+name = "Creative prompt returns valid story"
+expected_key = "output_text"
+
+[test.cases.payload]
+model = "miklium-lm-nano"
+input = "Tell me a very short story about a cat."

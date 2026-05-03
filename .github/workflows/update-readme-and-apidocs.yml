@@ -42,22 +42,22 @@ jobs:
               s = s.replace(' ', '-')
               return s
 
-          api_dirs = []
+          api_docs = []
           if os.path.exists(root):
-              dirs = sorted([d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))])
-              for d in dirs:
-                  if d == exclude: continue
-                  path = os.path.join(root, d, 'README.md')
-                  if os.path.exists(path):
-                      api_dirs.append(d)
+              for dirpath, dirnames, filenames in os.walk(root):
+                  if exclude in dirpath: continue
+                  if 'README.md' in filenames:
+                      path = os.path.join(dirpath, 'README.md')
+                      rel_dir = os.path.relpath(dirpath, root)
                       with open(path, 'r', encoding='utf-8') as f:
                           c = f.read()
                       m = re.search(r'^#\s+(.+)$', c, re.MULTILINE)
-                      t = m.group(1).strip() if m else d
+                      t = m.group(1).strip() if m else os.path.basename(dirpath)
                       s = get_slug(t)
-                      docs.append({'t': t, 's': s, 'c': c, 'dir': d})
+                      api_docs.append({'t': t, 's': s, 'c': c, 'dir': rel_dir})
 
-          api_count = len(docs)
+          api_docs.sort(key=lambda x: x['t'])
+          api_count = len(api_docs)
 
           md = '# MIKLIUM API Documentation\n'
           md += '# Navigation\n### Information\n - [MIKLIUM API Documentation](#miklium-api-documentation)\n - [Navigation](#navigation)\n - [About MIKLIUM APIs](#about-miklium-apis)\n### APIs Documentations\n'
@@ -69,16 +69,16 @@ jobs:
               anchor_counts[slug] = anchor_counts.get(slug, -1) + 1
 
           temp_counts = anchor_counts.copy()
-          for d in docs:
+          for d in api_docs:
               slug = get_slug(d['t'])
               count = temp_counts.get(slug, -1) + 1
               temp_counts[slug] = count
               suffix = f'-{count}' if count > 0 else ''
-              md += f\" - [{d['t']}](#{slug}{suffix})\n\"
+              md += f" - [{d['t']}](#{slug}{suffix})\n"
 
           md += '\n# About MIKLIUM APIs\n\nAt MIKLIUM, we empower developers and users with high-quality, free APIs and software tools to help you build, innovate, and explore without limits. Here you will find detailed documentation for each of our APIs.\n'
 
-          for d in docs:
+          for d in api_docs:
               content = d['c']
               replacements = {}
               local_counts = {}
@@ -126,7 +126,7 @@ jobs:
 
           if api_list_start in readme and api_list_end in readme:
               api_bullets = ''
-              for d in docs:
+              for d in api_docs:
                   api_bullets += f'  - [{d["t"]}](api/{d["dir"]}/README.md)\n'
               api_section = api_list_start + '\n' + api_bullets + api_list_end
               pattern = re.escape(api_list_start) + r'.*?' + re.escape(api_list_end)

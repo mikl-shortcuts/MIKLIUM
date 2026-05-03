@@ -981,7 +981,9 @@
         if (response.ok) {
           var items = await response.json();
           return items
-            .filter(function(item) { return item.type === 'dir'; })
+            .filter(function(item) { 
+              return item.type === 'dir' && item.name !== 'models' && item.name !== 'beta'; 
+            })
             .map(function(item) { return item.name; })
             .sort();
         }

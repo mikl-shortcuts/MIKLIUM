@@ -3,23 +3,24 @@ import os
 import sys
 from http.server import BaseHTTPRequestHandler
 
-# Add the models directory to path
-project_root = os.getcwd()
-models_path = os.path.join(project_root, "api/models/miklium-lm-nano")
-if models_path not in sys.path:
-    sys.path.insert(0, models_path)
+# Robust path resolution
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODELS_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "models", "miklium-lm-nano"))
+
+if MODELS_ROOT not in sys.path:
+    sys.path.insert(0, MODELS_ROOT)
 
 try:
     import inference
 except ImportError:
-    # Fallback to relative path if os.getcwd() isn't what we expect
-    models_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../models/miklium-lm-nano")
-    if models_path not in sys.path:
-        sys.path.insert(0, models_path)
+    # Try another common Vercel path structure if needed
+    MODELS_ROOT = os.path.join(os.getcwd(), "api", "models", "miklium-lm-nano")
+    if MODELS_ROOT not in sys.path:
+        sys.path.insert(0, MODELS_ROOT)
     import inference
 
 # Initialize the model once
-MODEL_FILE = os.path.join(models_path, "website/miklium-lm-nano_502.7K.miklium_model")
+MODEL_FILE = os.path.join(MODELS_ROOT, "website", "miklium-lm-nano_502.7K.miklium_model")
 model = None
 
 try:
