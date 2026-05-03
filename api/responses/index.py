@@ -23,10 +23,14 @@ except ImportError:
 MODEL_FILE = os.path.join(MODELS_ROOT, "website", "miklium-lm-nano_502.7K.miklium_model")
 model = None
 
+import traceback
+
+model_load_error = None
 try:
     model = inference.MikliumNanoInference(MODEL_FILE)
 except Exception as e:
-    print(f"Error loading model: {e}")
+    model_load_error = f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}"
+    print(f"Error loading model: {model_load_error}")
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -46,7 +50,7 @@ class handler(BaseHTTPRequestHandler):
             return self._send_json(400, {"success": False, "error": "Missing 'input' field"})
 
         if model is None:
-            return self._send_json(500, {"success": False, "error": "Model not loaded"})
+            return self._send_json(500, {"success": False, "error": f"Model not loaded: {model_load_error}"})
 
         try:
             # Simple prompt engineering for the nano model if needed
