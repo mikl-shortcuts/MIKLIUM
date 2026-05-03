@@ -22,12 +22,12 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 > **<!-- API_COUNT_START -->6<!-- API_COUNT_END --> APIs are available now:**
 
 <!-- API_LIST_START -->
-  - [Chatbot API Documentation](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/chatbot/README.md)
-  - [Python Sandbox API Documentation](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/python-sandbox/README.md)
-  - [Miklium LLM Responses API Documentation](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/responses/README.md)
-  - [Search API Documentation](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/search/README.md)
-  - [Apple Shortcuts Data API Documentation](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/shortcut-info/README.md)
-  - [YouTube Transcription API Documentation](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/youtube-transcript/README.md)
+  - [Chatbot API Documentation](api/chatbot/README.md)
+  - [Python Sandbox API Documentation](api/python-sandbox/README.md)
+  - [Miklium LLM Responses API Documentation](api/responses/README.md)
+  - [Search API Documentation](api/search/README.md)
+  - [Apple Shortcuts Data API Documentation](api/shortcut-info/README.md)
+  - [YouTube Transcription API Documentation](api/youtube-transcript/README.md)
 <!-- API_LIST_END -->
 
 **[Full API Documentation](APIDOCS.md)** is available for developers who want to integrate with our services.

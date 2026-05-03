@@ -127,7 +127,7 @@ jobs:
           if api_list_start in readme and api_list_end in readme:
               api_bullets = ''
               for d in docs:
-                  api_bullets += f'  - [{d[\"t\"]}](https://github.com/MIKLIUM/MIKLIUM/tree/main/api/{d[\"dir\"]}/README.md)\n'
+                  api_bullets += f'  - [{d["t"]}](api/{d["dir"]}/README.md)\n'
               api_section = api_list_start + '\n' + api_bullets + api_list_end
               pattern = re.escape(api_list_start) + r'.*?' + re.escape(api_list_end)
               readme = re.sub(pattern, api_section, readme, flags=re.DOTALL)
