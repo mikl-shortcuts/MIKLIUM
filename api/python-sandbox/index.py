@@ -35,7 +35,7 @@ BLOCKED_MODULES = [
 
 BLOCKED_BUILTINS = [
     "open", "exec", "eval", "compile", "breakpoint",
-    "__import__", "exit", "quit", "help", "input",
+    "exit", "quit", "help", "input",
     "memoryview", "property", "type", "object",
 ]
 
@@ -110,9 +110,9 @@ def __sandbox_init():
     builtins.delattr = _safe_delattr
 
     for b in {blocked_builtins}:
-        setattr(builtins, b, None)
+        object.__setattr__(builtins, b, None)
     
-    builtins.vars = None
+    object.__setattr__(builtins, "vars", None)
     sys.setrecursionlimit({max_recursion})
 
 __sandbox_init()
