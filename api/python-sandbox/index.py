@@ -90,7 +90,10 @@ def __sandbox_init():
         return _orig_import(name, *args, **kwargs)
     builtins.__import__ = _safe_import
 
+    _orig_setattr = setattr
+    _orig_delattr = delattr
     _orig_getattr = getattr
+
     def _safe_getattr(obj, name, *args):
         if isinstance(name, str) and (name in _blocked_attrs or (name.startswith("__") and name.endswith("__"))):
              raise AttributeError(f"Access to '{{name}}' is blocked")
@@ -100,19 +103,19 @@ def __sandbox_init():
     def _safe_setattr(obj, name, value):
         if isinstance(name, str) and (name in _blocked_attrs or (name.startswith("__") and name.endswith("__"))):
             raise AttributeError(f"Setting '{{name}}' is blocked")
-        object.__setattr__(obj, name, value)
+        _orig_setattr(obj, name, value)
     builtins.setattr = _safe_setattr
 
     def _safe_delattr(obj, name):
         if isinstance(name, str) and (name in _blocked_attrs or (name.startswith("__") and name.endswith("__"))):
             raise AttributeError(f"Deleting '{{name}}' is blocked")
-        object.__delattr__(obj, name)
+        _orig_delattr(obj, name)
     builtins.delattr = _safe_delattr
 
     for b in {blocked_builtins}:
-        object.__setattr__(builtins, b, None)
+        _orig_setattr(builtins, b, None)
     
-    object.__setattr__(builtins, "vars", None)
+    _orig_setattr(builtins, "vars", None)
     sys.setrecursionlimit({max_recursion})
 
 __sandbox_init()
