@@ -27,7 +27,7 @@ jobs:
 
       - name: Generate APIDOCS.md and update README.md
         run: |
-          python3 -c "
+          cat << 'EOF' > update_docs.py
           import os
           import re
 
@@ -51,10 +51,10 @@ jobs:
                       rel_dir = os.path.relpath(dirpath, root)
                       with open(path, 'r', encoding='utf-8') as f:
                           c = f.read()
-                      m = re.search(r'^#\s+(.+)$', c, re.MULTILINE)
-                      t = m.group(1).strip() if m else os.path.basename(dirpath)
-                      s = get_slug(t)
-                      api_docs.append({'t': t, 's': s, 'c': c, 'dir': rel_dir})
+                          m = re.search(r'^#\s+(.+)$', c, re.MULTILINE)
+                          t = m.group(1).strip() if m else os.path.basename(dirpath)
+                          s = get_slug(t)
+                          api_docs.append({'t': t, 's': s, 'c': c, 'dir': rel_dir})
 
           api_docs.sort(key=lambda x: x['t'])
           api_count = len(api_docs)
@@ -170,13 +170,14 @@ jobs:
                   feat_replacement = readme_feat_start + '\n' + table + '\n' + readme_feat_end
                   readme = re.sub(feat_pattern, feat_replacement, readme, flags=re.DOTALL)
 
-                  if readme_feat_count_start in readme and readme_feat_count_end in readme:
-                      fc_pattern = re.escape(readme_feat_count_start) + r'.*?' + re.escape(readme_feat_count_end)
-                      readme = re.sub(fc_pattern, readme_feat_count_start + str(total) + readme_feat_count_end, readme)
+              if readme_feat_count_start in readme and readme_feat_count_end in readme:
+                  fc_pattern = re.escape(readme_feat_count_start) + r'.*?' + re.escape(readme_feat_count_end)
+                  readme = re.sub(fc_pattern, readme_feat_count_start + str(total) + readme_feat_count_end, readme)
 
           with open('README.md', 'w', encoding='utf-8') as f:
               f.write(readme)
-          "
+          EOF
+          python3 update_docs.py
 
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v5
