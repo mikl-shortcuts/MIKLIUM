@@ -51,9 +51,7 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 <a href="https://github.com/MIKLIUM-Team/MIKLIUM/actions/workflows/api-tests.yml?query=branch%3Amain"><img alt="API Tests status" src="https://img.shields.io/github/actions/workflow/status/MIKLIUM-Team/MIKLIUM/api-tests.yml?branch=main&style=for-the-badge&logo=github-actions&logoColor=white&label=API%20TESTS"></a>
 
 ## Contribute
-
 Information describing how to contribute can be found in the [`Contributing to MIKLIUM`](docs/CONTRIBUTING.md).
 
-## Stats
-
-![](https://repobeats.axiom.co/api/embed/c42a15b5310e14cdf02106d3e2bea022b0c39cc3.svg)
+## License
+This project is licensed under under the [`MIT License`](LICENSE.md)

@@ -37,7 +37,7 @@
 **Checklist:**
 
 - [x] I have read [`Contributing rules`](https://github.com/MIKLIUM/MIKLIUM/blob/main/CONTRIBUTING.md).
-- [x] I have researched [`MIKLIUM Project Structure](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/STRUCTURE.md).
+- [x] I have researched [`MIKLIUM Project Structure`](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/STRUCTURE.md).
 - [x] Existing functionality is not broken.
 - [] If I added a new API, I added a corresponding `README.md` with documemtation (without changing `README.md` and `APIDOCS.md` in `root` directory) and `config.toml` for MIKLIUM API playground configuration and Testing Workflow.
 - [ ] My code follows the existing project structure, style and naming conventions.

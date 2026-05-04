@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'api/**/README.md'
-      - 'FEATURED_PROJECTS.md'
+      - 'docs/FEATURED_PROJECTS.md'
 
 permissions:
   contents: write
