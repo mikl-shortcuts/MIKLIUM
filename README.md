@@ -19,12 +19,11 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 * **[Contribution Guidelines](docs/CONTRIBUTING.md)**
 
 ## Currently Available APIs:
-> **<!-- API_COUNT_START -->7<!-- API_COUNT_END --> APIs are available now:**
+> **<!-- API_COUNT_START -->6<!-- API_COUNT_END --> APIs are available now:**
 
 <!-- API_LIST_START -->
   - [Apple Shortcuts Data API Documentation](api/shortcut-info/README.md)
   - [Chatbot API Documentation](api/chatbot/README.md)
-  - [MIKLIUM LM](api/models/miklium-lm-nano/README.md)
   - [Miklium LLM Responses API Documentation](api/responses/README.md)
   - [Python Sandbox API Documentation](api/python-sandbox/README.md)
   - [Search API Documentation](api/search/README.md)
