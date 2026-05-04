@@ -5,824 +5,18 @@
  - [Navigation](#navigation)
  - [About MIKLIUM APIs](#about-miklium-apis)
 ### APIs Documentations
-> **6 APIs are avaiable now:**
- - [Chatbot API Documentation](#chatbot-api-documentation)
- - [Python Sandbox API Documentation](#python-sandbox-api-documentation)
- - [Miklium LLM Responses API Documentation](#miklium-llm-responses-api-documentation)
- - [Search API Documentation](#search-api-documentation)
+> **7 APIs are avaiable now:**
  - [Apple Shortcuts Data API Documentation](#apple-shortcuts-data-api-documentation)
+ - [Chatbot API Documentation](#chatbot-api-documentation)
+ - [MIKLIUM LM](#miklium-lm)
+ - [Miklium LLM Responses API Documentation](#miklium-llm-responses-api-documentation)
+ - [Python Sandbox API Documentation](#python-sandbox-api-documentation)
+ - [Search API Documentation](#search-api-documentation)
  - [YouTube Transcription API Documentation](#youtube-transcription-api-documentation)
 
 # About MIKLIUM APIs
 
 At MIKLIUM, we empower developers and users with high-quality, free APIs and software tools to help you build, innovate, and explore without limits. Here you will find detailed documentation for each of our APIs.
-
----
-# Chatbot API Documentation
-
-## Navigation
-**[Back to MIKLIUM APIs navigation](#navigation)**
-
-
-- [Chatbot API Documentation](#chatbot-api-documentation)
-    - [Navigation](#navigation-1)
-    - [About MIKLIUM Chatbot API](#about-miklium-chatbot-api)
-    - [Request Body](#request-body)
-        - [GET Method](#get-method)
-        - [POST Method](#post-method)
-    - [Response Stacking](#response-stacking)
-    - [Bot Personalities](#bot-personalities)
-    - [Supported Topics](#supported-topics)
-    - [Code Examples](#code-examples)
-    - [API Responses](#api-responses)
-        - [Success](#success)
-        - [Error](#error)
-
-## About MIKLIUM Chatbot API
-
-**A lightweight, rule-based chatbot.** This API provides a conversational interface that can answer questions about MIKLIUM, its APIs, documentation, community, and more. It is designed to work on low-compute devices and delivers quick, deterministic responses with no external dependencies.
-
-Unlike a single-match bot, MIKLIUM Chatbot supports **response stacking** — when your message touches multiple topics (e.g. a greeting *and* a question about the APIs), the chatbot can intelligently combine matching responses into one rich reply.
-
-## Request Body
-
-Link: `https://miklium.vercel.app/api/chatbot`
-
-| Parameter | Required | Type | Default | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `message` | Yes | String | — | The user's message to the chatbot |
-| `response_stacking` | No | Integer (0 – 100) | `4` | How many matched topic responses to combine in the reply |
-| `personality` | No | String | `miklium` | The personality of the bot (`miklium`, `personalityless`, `male`, `female`, `all`) |
-
-### GET Method
-
-`https://miklium.vercel.app/api/chatbot?message=Paste Your message here`
-
-> [!IMPORTANT]
-> For GET Method the message should be URL-encoded!
-
-**Request Link Examples:**
-* `https://miklium.vercel.app/api/chatbot?message=Hello%2C%20how%20do%20I%20use%20the%20Python%20Sandbox%3F`
-* `https://miklium.vercel.app/api/chatbot?message=Hi%2C%20how%20are%20you%3F&response_stacking=2&personality=male`
-
-### POST Method
-
-`https://miklium.vercel.app/api/chatbot`
-
-```javascript
-{
-  "message": "Hello, how do I use the Python Sandbox?",
-  "response_stacking": 4,
-  "personality": "miklium"
-}
-```
-
-## Response Stacking
-
-`response_stacking` is an optional integer parameter (**0 – 100**, default **`4`**) that controls how many pattern-matched responses are combined into the final reply.
-
-| Value | Behaviour |
-| :--- | :--- |
-| `0` | Only the **first** matching response is returned (classic single-match mode) |
-| `1` – `99` | Up to **N + 1** matched responses are joined into one reply |
-| `100` | All matching responses are combined (maximum verbosity) |
-
-**How it works:** The chatbot scans your message against every topic pattern in order. Each time a pattern matches, one randomly-chosen response for that topic is added to the list. When the list reaches `response_stacking + 1` entries (or all patterns have been checked), the collected responses are joined with a space and returned as a single string.
-
-**Example — `response_stacking: 2` with message `"Hey, how are you? Tell me about the APIs"`:**
-
-```javascript
-// Request
-{
-  "message": "Hey, how are you? Tell me about the APIs",
-  "response_stacking": 2
-}
-
-// Response (three matched topics combined)
-{
-  "response": "Hey there! Welcome to MIKLIUM. What can I do for you? Running at full capacity and feeling fantastic! What can I do for you? All MIKLIUM APIs are free and require no API key. Current offerings: Python Sandbox, Search, YouTube Transcript, Apple Shortcuts Info, and Chatbot."
-}
-```
-
-## Bot Personalities
-
-The `personality` parameter allows you to change the bot's tone and response style.
-
-| Personality | Alias | Description |
-| :--- | :--- | :--- |
-| **MIKLIUM** | `miklium` | The default assistant. Helpful, professional, and knowledgeable about MIKLIUM. |
-| **Personalityless** | `personalityless`| A cold, logical bot. Minimalist and formal. Focused on pure data. |
-| **General Male** | `male` | A friendly guy in his early 20s. Casual tone, uses "yo", "vibing", etc. |
-| **General Female** | `female` | A friendly girl in her early 20s. Warm tone, uses emojis and casual language. |
-| **All** | `all` | A hybrid mode that uses all response sets. This is the **most intelligent mode** as it pulls from every knowledge base. |
-
-Each personality has its own unique set of pattern responses and fallbacks. The "All" mode is particularly powerful as it combines the strengths (and variety) of every single personality into one.
-
-## Supported Topics
-
-The chatbot recognises a wide range of topics out of the box:
-
-| Topic | Example phrases |
-| :--- | :--- |
-| Greetings | hello, hi, hey, good morning, howdy |
-| How are you | how are you, you doing okay, are you well |
-| Capabilities | what can you do, how can you help |
-| APIs overview | apis, what do you offer, what is available |
-| Documentation | docs, documentation, how to use, guide |
-| Python Sandbox | python, sandbox, run code, code execution |
-| Search API | search, web search, find, queries |
-| YouTube Transcript | youtube, transcript, captions, subtitles |
-| Apple Shortcuts | shortcut, icloud, routinehub, automation |
-| Chatbot API | chatbot, chat api, this api, bot api |
-| Response Stacking | response stacking, stacking, stacked response |
-| GitHub / OSS | github, open source, contribute, pull request |
-| Community / Support | discord, help, support, bug, issue |
-| About MIKLIUM | what is miklium, who made you, about miklium |
-| Pricing | free, cost, price, subscription |
-| Rate Limits | rate limit, quota, throttle |
-| Error Handling | error, 500, 400, bad request, not working |
-| Authentication | auth, api key, token, bearer |
-| Request Format | json, body, content-type, endpoint |
-| Versioning | version, update, changelog, release |
-| Deployment | deploy, vercel, serverless, self-host |
-| Language / SDK | sdk, npm, curl, fetch, javascript, python |
-| Examples | example, sample, demo, getting started |
-| Thanks | thank you, appreciate, awesome, great |
-| Goodbye | bye, goodbye, see you, take care |
-| Jokes | joke, funny, lol, humor |
-| Time / Date | time, date, today, clock |
-| Weather | weather, temperature, forecast |
-
-## Code Examples
-
-### JavaScript (Fetch)
-```javascript
-const url = 'https://miklium.vercel.app/api/chatbot';
-const data = {
-  message: "Hello, how do I use the Python Sandbox?",
-  response_stacking: 4,
-  personality: "miklium"
-};
-
-fetch(url, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-})
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
-```
-
-### Python (Requests)
-```python
-import requests
-
-url = "https://miklium.vercel.app/api/chatbot"
-data = {
-    "message": "Hello, how do I use the Python Sandbox?",
-    "response_stacking": 4,
-    "personality": "miklium"
-}
-
-try:
-    response = requests.post(url, json=data)
-    response.raise_for_status()
-    print(response.json())
-except requests.exceptions.RequestException as e:
-    print(f"Error: {e}")
-```
-
-### cURL
-```bash
-curl -X POST https://miklium.vercel.app/api/chatbot \
-     -H "Content-Type: application/json" \
-     -d '{
-           "message": "Hello, how do I use the Python Sandbox?",
-           "response_stacking": 4,
-           "personality": "miklium"
-         }'
-```
-
-## API Responses
-
-### Success
-
-**Response structure:**
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `true` |
-| `response` | `String`, The chatbot's response text (may be multiple sentences if stacking > 0) |
-
-**Success response examples:**
-```javascript
-{
-  "success": "true",
-  "response": "You can find our full API documentation at APIDOCS.html. It covers all endpoints and usage examples." // No stacking
-}
-```
-```javascript
-{
-  "success": "true",
-  "response": "Hi! Great to see you here. Ask me anything about MIKLIUM! All systems green! I'm here and ready to assist." // Stacking = 2, greeting + how-are-you combined
-}
-```
-
-### Error
-
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `false` |
-| `error` | `String`, Error message |
-
-**Error response example:**
-```javascript
-{
-  "success": "false",
-  "error": "Missing 'message' field"
-}
-```
-
-
----
-# Python Sandbox API Documentation
-
-## Navigation
-**[Back to MIKLIUM APIs navigation](#navigation)**
-
-
-- [Python Sandbox API Documentation](#python-sandbox-api-documentation)
-    - [Navigation](#navigation-2)
-    - [About MIKLIUM Python Sandbox API](#about-miklium-python-sandbox-api)
-    - [Request Body](#request-body-1)
-        - [POST Method](#post-method-1)
-    - [Code Examples](#code-examples-1)
-    - [API Responses](#api-responses-1)
-        - [Success](#success-1)
-        - [Error](#error-1)
-    - [Limitations](#limitations)
-        - [Code Limitations](#code-limitations)
-        - [Code Running and Output Limits:](#code-running-and-output-limits)
-
-## About MIKLIUM Python Sandbox API
-
-**Easily and quickly launch Python code.** Using this API, you can run Python code, configuring timeouts and inputs as needed for your code execution. Everything works without external dependencies.
-
-_Python Sandbox was suggested for creation by [Elc29](https://github.com/TheCodeWan)._
-
-## Request Body
-
-Link: `https://miklium.vercel.app/api/python-sandbox`
-
-| Parameter | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `code` | Yes | Text | Your Python code |
-| `stdin` | No | Array | Inputs for your program |
-| `timeout` | No | Number | Code execution time limit in seconds (by default `20`, maximum `40`, minimum `0.5`) |
-
-### POST Method
-
-`https://miklium.vercel.app/api/python-sandbox`
-
-```javascript
-{
-  "code": "Paste Your Python code here",
-  "stdin": ["Paste input here", "Another input…"] // Not necessarily
-  "timeout": 0 // Number of seconds (Not necessarily)
-}
-```
-
-**Request Body Examples (JSON):**
-
-* Python code:
-  ```python
-  print('Hello World!')
-  ```
-  Request Body:
-  ```javascript
-  {
-    "code": "print('Hello World!')"
-  }
-  ```
-
-* Python code:
-  ```python
-  a, b = int(input()), int(input()) # For example, inputs are 2 and 6
-  print(a, '+', b, '=', a+b)
-  ```
-  Request Body:
-  ```javascript
-  {
-    "code": "a, b = int(input()), int(input())\nprint(a, '+', b, '=', a+b)",
-    "stdin": [ 2, 6 ]
-  }
-  ```
-
-## Code Examples
-
-### JavaScript (Fetch)
-```javascript
-const url = 'https://miklium.vercel.app/api/python-sandbox';
-const data = {
-  code: "print('Hello from MIKLIUM!')\n",
-  timeout: 10
-};
-
-fetch(url, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-})
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
-```
-
-### Python (Requests)
-```python
-import requests
-
-url = "https://miklium.vercel.app/api/python-sandbox"
-data = {
-    "code": "print('Hello from MIKLIUM!')\n",
-    "timeout": 10
-}
-
-try:
-    response = requests.post(url, json=data)
-    response.raise_for_status()
-    print(response.json())
-except requests.exceptions.RequestException as e:
-    print(f"Error: {e}")
-```
-
-### cURL
-```bash
-curl -X POST https://miklium.vercel.app/api/python-sandbox \
-     -H "Content-Type: application/json" \
-     -d '{
-           "code": "print('\''Hello from MIKLIUM!'\'')\n",
-           "timeout": 10
-         }'
-```
-
-## API Responses
-
-### Success
-
-**Response structure:**
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `true` |
-| `exit_code` | `0` |
-| `stdout` | `Text`, Python program output |
-| `time_ms` | `Number`, Code execution time in milliseconds |
-
-**Success response example:**
-```javascript
-{
-  "success" : true,
-  "exit_code" : 0,
-  "stdout" : "5 + 6 = 11",
-  "time_ms" : 18
-}
-```
-
-### Error
-
-**Server error:**
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `false` |
-| `error` | `String`, Error message |
-
-**Code running error:**
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `false` |
-| `exit_code` | `Number`, Code of error |
-| `stdout` | `Text`, Python program output before error |
-| `time_ms` | `Number`, Code execution time in milliseconds |
-| `error` | `Text`, Python error message |
-
-
-**Error response examples:**
-```javascript
-{
-  "success" : false,
-  "error" : "Blocked: os — not allowed in sandbox"
-}
-```
-```javascript
-{
-  "success" : false,
-  "stdout" : "",
-  "exit_code" : 1,
-  "time_ms" : 22,
-  "error" : "Runtime error: Traceback (most recent call last):\n  line 1, in <module>\nImportError: cannot import name 'products' from 'itertools' (unknown location). Did you mean: 'product'?"
-}
-```
-
-## Limitations
-
-Unfortunately, the Python Sandbox is not designed to run very complex or potentially dangerous code, so it has several limitations.
-
-### Code Limitations:
-
-* Maximum number of lines of code:`15 000`
-* Blocked modules that cannot be imported:
-  ```python
-  "os", "subprocess", "shutil", "pathlib", "glob", "tempfile" # File system
-  "socket", "urllib", "requests", "httpx", "http", "aiohttp" # Network
-  "ftplib", "smtplib", "imaplib", "poplib" # Mail protocols
-  "multiprocessing", "threading", "signal", "asyncio" # Concurrency
-  "ctypes", "cffi", "mmap" # Low-level operations
-  "pickle", "shelve", "marshal" # Unsafe serialization
-  "importlib", "code", "codeop" # Dynamic imports
-  "webbrowser", "antigravity", "turtle" # GUI and browser
-  "gc", "resource", "atexit", "io" # System resources
-  "posix", "nt", "posixpath", "ntpath", "genericpath", "pwd", "grp", "fcntl", "termios", "tty", "pty" # Low-level system
-  "_posixsubprocess", "_signal" # Low-level process
-  "_io" # Low-level backend
-  "_frozen_importlib", "_frozen_importlib_external", "zipimport", "_imp" # Import system internals
-  ```
-* Third-party modules cannot be imported
-* Blocked build-in functions:
-  ```python
-  open() # File read or write
-  exec() # Execute arbitrary code
-  eval() # Evaluate strings as code
-  compile() # Compile code
-  breakpoint() # Debugging
-  __import__() # Dynamic import (intercepted)
-  exit() # Exit program
-  quit() # Exit program
-  ```
-* Blocked Dunder Attributes (sandbox escape prevention):
-  ```python
-  __subclasses__ # Get subclasses (for RCE)
-  __globals__ # Access global variables
-  __builtins__ # Access built-in functions
-  __code__ # Access bytecode
-  __bases__ # Parent classes
-  __mro__ # Method Resolution Order
-  __dict__ # Access object internals
-  __class__ # Class manipulation
-  ```
-
-### Code Running and Output Limits:
-
-* Maximum Python program output: `10 000` characters
-* Maximum Python code error message: `7 000` characters
-* Maximum timeout: `40` seconds (can be configured in Request Body)
-* Maximum of memory usage (RAM): `64` MB
-* Maximum of recursion (then function calls itself) depth: `200` levels. Example of recursion:
-  ```python
-  # Factorial calculator
-
-  def factorial(n):
-    if n <= 1:
-      return 1
-    return n * factorial(n - 1) # Function calls itself
-
-  print(factorial(5))  # 120
-  ```
-
-
----
-# Miklium LLM Responses API Documentation
-
-## Navigation
-**[Back to MIKLIUM APIs navigation](#navigation)**
-
-
-- [Miklium LLM Responses API Documentation](#miklium-llm-responses-api-documentation)
-  - [About MIKLIUM Responses](#about-miklium-responses)
-  - [Request Body](#request-body-2)
-    - [POST Method](#post-method-2)
-  - [Code Examples](#code-examples-2)
-    - [JavaScript (OpenAI-like SDK Style)](#javascript-openai-like-sdk-style)
-  - [API Responses](#api-responses-2)
-    - [Success](#success-2)
-    - [Error](#error-2)
-
-## About MIKLIUM Responses
-
-This API provides access to the Miklium LLM models, starting with **miklium-lm-nano**. It is designed to be easy to use and follows a clean request structure similar to the OpenAI SDK.
-
-## Request Body
-
-Link: `https://miklium.vercel.app/api/responses`
-
-| Parameter | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `input` | Yes | String | The prompt text to send to the model. |
-| `model` | No | String | The model ID (currently only `miklium-lm-nano`). |
-
-### POST Method
-
-```json
-{
-  "model": "miklium-lm-nano",
-  "input": "Write a short bedtime story about a unicorn."
-}
-```
-
-## Code Examples
-
-### JavaScript (OpenAI-like SDK Style)
-
-You can use the following pattern to call the API in a way that feels like the OpenAI SDK:
-
-```javascript
-class MikliumAI {
-  constructor(config = {}) {
-    this.baseURL = config.baseURL || "https://miklium.vercel.app/api/responses";
-  }
-
-  get responses() {
-    return {
-      create: async (data) => {
-        const res = await fetch(this.baseURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error(await res.text());
-        return res.json();
-      }
-    };
-  }
-}
-
-const client = new MikliumAI();
-
-const response = await client.responses.create({
-  model: "miklium-lm-nano",
-  input: "Write a short bedtime story about a unicorn.",
-});
-
-console.log(response.output_text);
-```
-
-### Python (Requests)
-
-```python
-import requests
-
-r = requests.post("https://miklium.vercel.app/api/responses",
-                   json={"model": "miklium-lm-nano", "input": "Write a short bedtime story about a unicorn."})
-print(r.json()["output_text"])
-```
-
-## API Responses
-
-### Success
-
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `true` |
-| `model` | `String`, The model used |
-| `output_text` | `String`, The generated response |
-| `usage` | `Object`, Token usage information |
-
-```json
-{
-  "success": true,
-  "model": "miklium-lm-nano",
-  "output_text": "Once upon a time, in a land of rainbows...",
-  "usage": {
-    "total_tokens": 42
-  }
-}
-```
-
-### Error
-
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `false` |
-| `error` | `String`, Error message |
-
-```json
-{
-  "success": false,
-  "error": "Missing 'input' field"
-}
-```
-
-
----
-# Search API Documentation
-
-## Navigation
-**[Back to MIKLIUM APIs navigation](#navigation)**
-
-
-- [Search API Documentation](#search-api-documentation)
-    - [Navigation](#navigation-4)
-    - [About MIKLIUM Search API](#about-miklium-search-api)
-    - [Request Body](#request-body-3)
-        - [GET Method](#get-method-1)
-        - [POST Method](#post-method-3)
-    - [Code Examples](#code-examples-3)
-    - [API Responses](#api-responses-3)
-        - [Success](#success-3)
-        - [Error](#error-3)
-    - [Additional Information](#additional-information)
-        - [Types of the Information](#types-of-the-information)
-        - [Choosing the Right Information Format](#choosing-the-right-information-format)
-    - [What Services Does This API Use?](#what-services-does-this-api-use)
-
-## About MIKLIUM Search API
-
-**Get information from the Internet on your request in a convenient format.** You can also configure how much data you need to receive and in what format. Our API uses the Yahoo Search engine and website scraping system.
-
-## Request Body
-
-Link: `https://miklium.vercel.app/api/search`
-
-| Parameter | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `search` | Yes | Array | Search queries (maximum 3) |
-| `maxSmallSnippets`| No | Number | The number of short information for each request (by default `5`) |
-| `maxLargeSnippets` | No | Number | The number of long information for each request (by default `2`) |
-| `maxLargeSnippetSymbols` | No | Number | Maximum number of characters for one long information (by default `4500`) |
-
-### GET Method
-
-`https://miklium.vercel.app/api/search?search=Paste Your query(queries) here`
-
-If you want to write several requests at once (maximum 3), connect them with `~`. If you want to add additional parameters, write them through `&`.
-
-> [!IMPORTANT]
-> For GET Method the search requests should be URL-encoded!
-
-**Request Link Examples:**
-* `https://miklium.vercel.app/api/search?search=iPhone%20Air`
-* `https://miklium.vercel.app/api/search?search=iPhone%20Air~iPhone%2017%20Pro&maxSmallSnippets=3&maxLargeSnippets=0`
-
-### POST Method
-
-`https://miklium.vercel.app/api/search`
-
-```javascript
-{
-  "search": ["Paste Your query here", "If You need more requests at a time, add new objects to the list (maximum 3)"],
-  "maxSmallSnippets": 0, // Number (Not necessarily)
-  "maxLargeSnippets": 0, // Number (Not necessarily)
-  "maxLargeSnippetSymbols": 0 // Number (Not necessarily)
-}
-```
-
-**Request Body Examples (JSON):**
-```javascript
-{
-  "search": ["iPhone Air"]
-}
-```
-```javascript
-{
-  "search": ["iPhone Air", "iPhone 17 Pro"],
-  "maxSmallSnippets": 3,
-  "maxLargeSnippets": 0
-}
-```
-
-## Code Examples
-
-### JavaScript (Fetch)
-```javascript
-const url = 'https://miklium.vercel.app/api/search';
-const data = {
-  search: ["iPhone 17 Pro"],
-  maxSmallSnippets: 3,
-  maxLargeSnippets: 1
-};
-
-fetch(url, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-})
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
-```
-
-### Python (Requests)
-```python
-import requests
-
-url = "https://miklium.vercel.app/api/search"
-data = {
-    "search": ["iPhone 17 Pro"],
-    "maxSmallSnippets": 3,
-    "maxLargeSnippets": 1
-}
-
-try:
-    response = requests.post(url, json=data)
-    response.raise_for_status()
-    print(response.json())
-except requests.exceptions.RequestException as e:
-    print(f"Error: {e}")
-```
-
-### cURL
-```bash
-curl -X POST https://miklium.vercel.app/api/search \
-     -H "Content-Type: application/json" \
-     -d '{
-           "search": ["iPhone 17 Pro"],
-           "maxSmallSnippets": 3,
-           "maxLargeSnippets": 1
-         }'
-```
-
-## API Responses
-
-### Success
-
-**General response:**
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `true` |
-| `results` | `Array with Dictionaries`, Search results |
-
-**Components of `results` elements:**
-| Parameter | Value |
-| :--- | :--- |
-| `query` | `String`, The request to which the information was found |
-| `symbols` | `Number`, The number of characters that this information contains |
-| `url` | `String`, Link to the source of the information |
-| `type` | `String: short OR long`, Type of the information |
-| `snippet` | `String`, The information itself |
-
-**Success response example:**
-```javascript
-{
-  "success": true,
-  "results": [
-    {
-      "symbols": 194,
-      "query": "iPhone Air ",
-      "url": "https://en.wikipedia.org/wiki/Iphone_air",
-      "type": "short",
-      "snippet": "iPhone Air is..."
-    },
-    {
-      "symbols": 4500,
-      "query": "iPhone 17 Pro Max",
-      "url": "https://www.pcmag.com/reviews/apple-iphone-17-pro-max",
-      "type": "long",
-      "snippet": "iPhone 17 Pro is…"
-    }
-  ]
-}
-```
-
-### Error
-
-| Parameter | Value |
-| :--- | :--- |
-| `success` | `false` |
-| `error` | `String`, Error message |
-
-**Error response example:**
-```javascript
-{
-  "success": false,
-  "error": "Invalid or missing 'search' parameter."
-}
-```
-
-## Additional Information
-
-### Types of the Information
-
-As you have already noticed, the API returns two types of information: `short` and `long`. How are they different? Information marked `short` is obtained from a brief description of the site from the search engine. And the `long` information is already the full text from the site.
-
-### Choosing the Right Information Format
-
-* You can change the amount of information issued and its type using parameters maxSmallSnippets` (the number of short information for each request (by default 5), `maxLargeSnippets` (the number of long information for each request (by default 2) and `maxLargeSnippetSymbols` (maximum number of characters for one long information (by default 4500).
-
-* By setting the parameter `maxSmallSnippets` to 0, you will receive only information with `long` type, full information from sites. And by setting `maxLargeSnippets` to 0, you will only receive information with `short` type, brief information.
-
-* The number behind the parameters `maxSmallSnippets` and `maxLargeSnippets` is responsible for the amount of relevant information for each request. For example, if we have two quires  in `search`, we set `maxSmallSnippets` to 2, and `maxLargeSnippets` to 1. Thus, 4 short information and 2 long will be found: 2 short and 1 long for each request.
-
-* The parameter `maxLargeSnippetSymbols` is responsible for the maximum number of characters in long information (by default 4500). If the limit is increased, the long information will be cut off.
-
-## What Services Does This API Use?
-
-- [Yahoo Search](https://search.yahoo.com)
-
 
 ---
 # Apple Shortcuts Data API Documentation
@@ -832,16 +26,16 @@ As you have already noticed, the API returns two types of information: `short` a
 
 
 - [Apple Shortcuts Data API Documentation](#apple-shortcuts-data-api-documentation)
-    - [Navigation](#navigation-5)
+    - [Navigation](#navigation-1)
     - [About MIKLIUM Apple Shortcuts Data API](#about-miklium-apple-shortcuts-data-api)
-    - [Request Body](#request-body-4)
-        - [GET Method](#get-method-2)
-        - [POST Method](#post-method-4)
-    - [Code Examples](#code-examples-4)
-    - [API Responses](#api-responses-4)
-        - [Success](#success-4)
-        - [Error](#error-4)
-    - [What Services Does This API Use?](#what-services-does-this-api-use-1)
+    - [Request Body](#request-body)
+        - [GET Method](#get-method)
+        - [POST Method](#post-method)
+    - [Code Examples](#code-examples)
+    - [API Responses](#api-responses)
+        - [Success](#success)
+        - [Error](#error)
+    - [What Services Does This API Use?](#what-services-does-this-api-use)
 
 ## About MIKLIUM Apple Shortcuts Data API
 
@@ -1061,6 +255,850 @@ curl -X POST https://miklium.vercel.app/api/shortcut-info \
 
 - iCloud Shortcuts Records API
 - [RoutineHub API](https://github.com/mvan231/RoutineHubDocs/blob/main/README.md)
+
+
+---
+# Chatbot API Documentation
+
+## Navigation
+**[Back to MIKLIUM APIs navigation](#navigation)**
+
+
+- [Chatbot API Documentation](#chatbot-api-documentation)
+    - [Navigation](#navigation-2)
+    - [About MIKLIUM Chatbot API](#about-miklium-chatbot-api)
+    - [Request Body](#request-body-1)
+        - [GET Method](#get-method-1)
+        - [POST Method](#post-method-1)
+    - [Response Stacking](#response-stacking)
+    - [Bot Personalities](#bot-personalities)
+    - [Supported Topics](#supported-topics)
+    - [Code Examples](#code-examples-1)
+    - [API Responses](#api-responses-1)
+        - [Success](#success-1)
+        - [Error](#error-1)
+
+## About MIKLIUM Chatbot API
+
+**A lightweight, rule-based chatbot.** This API provides a conversational interface that can answer questions about MIKLIUM, its APIs, documentation, community, and more. It is designed to work on low-compute devices and delivers quick, deterministic responses with no external dependencies.
+
+Unlike a single-match bot, MIKLIUM Chatbot supports **response stacking** — when your message touches multiple topics (e.g. a greeting *and* a question about the APIs), the chatbot can intelligently combine matching responses into one rich reply.
+
+## Request Body
+
+Link: `https://miklium.vercel.app/api/chatbot`
+
+| Parameter | Required | Type | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `message` | Yes | String | — | The user's message to the chatbot |
+| `response_stacking` | No | Integer (0 – 100) | `4` | How many matched topic responses to combine in the reply |
+| `personality` | No | String | `miklium` | The personality of the bot (`miklium`, `personalityless`, `male`, `female`, `all`) |
+
+### GET Method
+
+`https://miklium.vercel.app/api/chatbot?message=Paste Your message here`
+
+> [!IMPORTANT]
+> For GET Method the message should be URL-encoded!
+
+**Request Link Examples:**
+* `https://miklium.vercel.app/api/chatbot?message=Hello%2C%20how%20do%20I%20use%20the%20Python%20Sandbox%3F`
+* `https://miklium.vercel.app/api/chatbot?message=Hi%2C%20how%20are%20you%3F&response_stacking=2&personality=male`
+
+### POST Method
+
+`https://miklium.vercel.app/api/chatbot`
+
+```javascript
+{
+  "message": "Hello, how do I use the Python Sandbox?",
+  "response_stacking": 4,
+  "personality": "miklium"
+}
+```
+
+## Response Stacking
+
+`response_stacking` is an optional integer parameter (**0 – 100**, default **`4`**) that controls how many pattern-matched responses are combined into the final reply.
+
+| Value | Behaviour |
+| :--- | :--- |
+| `0` | Only the **first** matching response is returned (classic single-match mode) |
+| `1` – `99` | Up to **N + 1** matched responses are joined into one reply |
+| `100` | All matching responses are combined (maximum verbosity) |
+
+**How it works:** The chatbot scans your message against every topic pattern in order. Each time a pattern matches, one randomly-chosen response for that topic is added to the list. When the list reaches `response_stacking + 1` entries (or all patterns have been checked), the collected responses are joined with a space and returned as a single string.
+
+**Example — `response_stacking: 2` with message `"Hey, how are you? Tell me about the APIs"`:**
+
+```javascript
+// Request
+{
+  "message": "Hey, how are you? Tell me about the APIs",
+  "response_stacking": 2
+}
+
+// Response (three matched topics combined)
+{
+  "response": "Hey there! Welcome to MIKLIUM. What can I do for you? Running at full capacity and feeling fantastic! What can I do for you? All MIKLIUM APIs are free and require no API key. Current offerings: Python Sandbox, Search, YouTube Transcript, Apple Shortcuts Info, and Chatbot."
+}
+```
+
+## Bot Personalities
+
+The `personality` parameter allows you to change the bot's tone and response style.
+
+| Personality | Alias | Description |
+| :--- | :--- | :--- |
+| **MIKLIUM** | `miklium` | The default assistant. Helpful, professional, and knowledgeable about MIKLIUM. |
+| **Personalityless** | `personalityless`| A cold, logical bot. Minimalist and formal. Focused on pure data. |
+| **General Male** | `male` | A friendly guy in his early 20s. Casual tone, uses "yo", "vibing", etc. |
+| **General Female** | `female` | A friendly girl in her early 20s. Warm tone, uses emojis and casual language. |
+| **All** | `all` | A hybrid mode that uses all response sets. This is the **most intelligent mode** as it pulls from every knowledge base. |
+
+Each personality has its own unique set of pattern responses and fallbacks. The "All" mode is particularly powerful as it combines the strengths (and variety) of every single personality into one.
+
+## Supported Topics
+
+The chatbot recognises a wide range of topics out of the box:
+
+| Topic | Example phrases |
+| :--- | :--- |
+| Greetings | hello, hi, hey, good morning, howdy |
+| How are you | how are you, you doing okay, are you well |
+| Capabilities | what can you do, how can you help |
+| APIs overview | apis, what do you offer, what is available |
+| Documentation | docs, documentation, how to use, guide |
+| Python Sandbox | python, sandbox, run code, code execution |
+| Search API | search, web search, find, queries |
+| YouTube Transcript | youtube, transcript, captions, subtitles |
+| Apple Shortcuts | shortcut, icloud, routinehub, automation |
+| Chatbot API | chatbot, chat api, this api, bot api |
+| Response Stacking | response stacking, stacking, stacked response |
+| GitHub / OSS | github, open source, contribute, pull request |
+| Community / Support | discord, help, support, bug, issue |
+| About MIKLIUM | what is miklium, who made you, about miklium |
+| Pricing | free, cost, price, subscription |
+| Rate Limits | rate limit, quota, throttle |
+| Error Handling | error, 500, 400, bad request, not working |
+| Authentication | auth, api key, token, bearer |
+| Request Format | json, body, content-type, endpoint |
+| Versioning | version, update, changelog, release |
+| Deployment | deploy, vercel, serverless, self-host |
+| Language / SDK | sdk, npm, curl, fetch, javascript, python |
+| Examples | example, sample, demo, getting started |
+| Thanks | thank you, appreciate, awesome, great |
+| Goodbye | bye, goodbye, see you, take care |
+| Jokes | joke, funny, lol, humor |
+| Time / Date | time, date, today, clock |
+| Weather | weather, temperature, forecast |
+
+## Code Examples
+
+### JavaScript (Fetch)
+```javascript
+const url = 'https://miklium.vercel.app/api/chatbot';
+const data = {
+  message: "Hello, how do I use the Python Sandbox?",
+  response_stacking: 4,
+  personality: "miklium"
+};
+
+fetch(url, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+```
+
+### Python (Requests)
+```python
+import requests
+
+url = "https://miklium.vercel.app/api/chatbot"
+data = {
+    "message": "Hello, how do I use the Python Sandbox?",
+    "response_stacking": 4,
+    "personality": "miklium"
+}
+
+try:
+    response = requests.post(url, json=data)
+    response.raise_for_status()
+    print(response.json())
+except requests.exceptions.RequestException as e:
+    print(f"Error: {e}")
+```
+
+### cURL
+```bash
+curl -X POST https://miklium.vercel.app/api/chatbot \
+     -H "Content-Type: application/json" \
+     -d '{
+           "message": "Hello, how do I use the Python Sandbox?",
+           "response_stacking": 4,
+           "personality": "miklium"
+         }'
+```
+
+## API Responses
+
+### Success
+
+**Response structure:**
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `true` |
+| `response` | `String`, The chatbot's response text (may be multiple sentences if stacking > 0) |
+
+**Success response examples:**
+```javascript
+{
+  "success": "true",
+  "response": "You can find our full API documentation at APIDOCS.html. It covers all endpoints and usage examples." // No stacking
+}
+```
+```javascript
+{
+  "success": "true",
+  "response": "Hi! Great to see you here. Ask me anything about MIKLIUM! All systems green! I'm here and ready to assist." // Stacking = 2, greeting + how-are-you combined
+}
+```
+
+### Error
+
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `false` |
+| `error` | `String`, Error message |
+
+**Error response example:**
+```javascript
+{
+  "success": "false",
+  "error": "Missing 'message' field"
+}
+```
+
+
+---
+<img src="assets/banner.png" alt="MIKLIUM LM" width="100%">
+
+# MIKLIUM LM
+## miklium-lm-nano
+
+MIKLIUM LM is an advanced large language model developed by OpenAGI for the MIKLIUM ecosystem. We are introducing **miklium-lm-nano**, the most compact and accessible model within the MIKLIUM LM family, designed for rapid deployment and experimentation, this model supports chain of thought reasoning.
+
+## About the Model
+
+The model architecture and training pipeline are built entirely using Python. 
+
+As a **foundation model**, `miklium-lm-nano` is currently pre-trained on a smaller, curated dataset. While it demonstrates capable foundational reasoning, unlocking its full potential requires further re-training and  fine-tuning, feeding it expanded training datasets, and training across additional epochs. 
+
+This repository includes not only the model itself but also a hands-on, beautifully designed web interface to chat directly with the model and experience its capabilities firsthand.
+
+## Live Demo
+
+Experience `miklium-lm-nano` in action on our official web interface:
+[Test the Model Here](https://aaa-g.github.io/miklium-lm-nano/website/index)
+
+## Sample Interaction
+
+Here is an example demonstrating the prompt format and the reasoning capabilities of the model:
+
+```text
+Prompt: <user> What is the capital of France?
+Response: 
+<ai> <think> The user is asking for the capital of France. The capital of France is Paris. <eos>
+```
+
+## License
+
+This model is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+# Miklium LLM Responses API Documentation
+
+## Navigation
+**[Back to MIKLIUM APIs navigation](#navigation)**
+
+
+- [Miklium LLM Responses API Documentation](#miklium-llm-responses-api-documentation)
+  - [About MIKLIUM Responses](#about-miklium-responses)
+  - [Request Body](#request-body-2)
+    - [POST Method](#post-method-2)
+  - [Code Examples](#code-examples-2)
+    - [JavaScript (OpenAI-like SDK Style)](#javascript-openai-like-sdk-style)
+  - [API Responses](#api-responses-2)
+    - [Success](#success-2)
+    - [Error](#error-2)
+
+## About MIKLIUM Responses
+
+This API provides access to the Miklium LLM models, starting with **miklium-lm-nano**. It is designed to be easy to use and follows a clean request structure similar to the OpenAI SDK.
+
+## Request Body
+
+Link: `https://miklium.vercel.app/api/responses`
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `input` | Yes | String | The prompt text to send to the model. |
+| `model` | No | String | The model ID (currently only `miklium-lm-nano`). |
+
+### POST Method
+
+```json
+{
+  "model": "miklium-lm-nano",
+  "input": "Write a short bedtime story about a unicorn."
+}
+```
+
+## Code Examples
+
+### JavaScript (OpenAI-like SDK Style)
+
+You can use the following pattern to call the API in a way that feels like the OpenAI SDK:
+
+```javascript
+class MikliumAI {
+  constructor(config = {}) {
+    this.baseURL = config.baseURL || "https://miklium.vercel.app/api/responses";
+  }
+
+  get responses() {
+    return {
+      create: async (data) => {
+        const res = await fetch(this.baseURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+    };
+  }
+}
+
+const client = new MikliumAI();
+
+const response = await client.responses.create({
+  model: "miklium-lm-nano",
+  input: "Write a short bedtime story about a unicorn.",
+});
+
+console.log(response.output_text);
+```
+
+### Python (Requests)
+
+```python
+import requests
+
+r = requests.post("https://miklium.vercel.app/api/responses",
+                   json={"model": "miklium-lm-nano", "input": "Write a short bedtime story about a unicorn."})
+print(r.json()["output_text"])
+```
+
+## API Responses
+
+### Success
+
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `true` |
+| `model` | `String`, The model used |
+| `output_text` | `String`, The generated response |
+| `usage` | `Object`, Token usage information |
+
+```json
+{
+  "success": true,
+  "model": "miklium-lm-nano",
+  "output_text": "Once upon a time, in a land of rainbows...",
+  "usage": {
+    "total_tokens": 42
+  }
+}
+```
+
+### Error
+
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `false` |
+| `error` | `String`, Error message |
+
+```json
+{
+  "success": false,
+  "error": "Missing 'input' field"
+}
+```
+
+
+---
+# Python Sandbox API Documentation
+
+## Navigation
+**[Back to MIKLIUM APIs navigation](#navigation)**
+
+
+- [Python Sandbox API Documentation](#python-sandbox-api-documentation)
+    - [Navigation](#navigation-4)
+    - [About MIKLIUM Python Sandbox API](#about-miklium-python-sandbox-api)
+    - [Request Body](#request-body-3)
+        - [POST Method](#post-method-3)
+    - [Code Examples](#code-examples-3)
+    - [API Responses](#api-responses-3)
+        - [Success](#success-3)
+        - [Error](#error-3)
+    - [Limitations](#limitations)
+        - [Code Limitations](#code-limitations)
+        - [Code Running and Output Limits:](#code-running-and-output-limits)
+
+## About MIKLIUM Python Sandbox API
+
+**Easily and quickly launch Python code.** Using this API, you can run Python code, configuring timeouts and inputs as needed for your code execution. Everything works without external dependencies.
+
+_Python Sandbox was suggested for creation by [Elc29](https://github.com/TheCodeWan)._
+
+## Request Body
+
+Link: `https://miklium.vercel.app/api/python-sandbox`
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `code` | Yes | Text | Your Python code |
+| `stdin` | No | Array | Inputs for your program |
+| `timeout` | No | Number | Code execution time limit in seconds (by default `20`, maximum `40`, minimum `0.5`) |
+
+### POST Method
+
+`https://miklium.vercel.app/api/python-sandbox`
+
+```javascript
+{
+  "code": "Paste Your Python code here",
+  "stdin": ["Paste input here", "Another input…"] // Not necessarily
+  "timeout": 0 // Number of seconds (Not necessarily)
+}
+```
+
+**Request Body Examples (JSON):**
+
+* Python code:
+  ```python
+  print('Hello World!')
+  ```
+  Request Body:
+  ```javascript
+  {
+    "code": "print('Hello World!')"
+  }
+  ```
+
+* Python code:
+  ```python
+  a, b = int(input()), int(input()) # For example, inputs are 2 and 6
+  print(a, '+', b, '=', a+b)
+  ```
+  Request Body:
+  ```javascript
+  {
+    "code": "a, b = int(input()), int(input())\nprint(a, '+', b, '=', a+b)",
+    "stdin": [ 2, 6 ]
+  }
+  ```
+
+## Code Examples
+
+### JavaScript (Fetch)
+```javascript
+const url = 'https://miklium.vercel.app/api/python-sandbox';
+const data = {
+  code: "print('Hello from MIKLIUM!')\n",
+  timeout: 10
+};
+
+fetch(url, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+```
+
+### Python (Requests)
+```python
+import requests
+
+url = "https://miklium.vercel.app/api/python-sandbox"
+data = {
+    "code": "print('Hello from MIKLIUM!')\n",
+    "timeout": 10
+}
+
+try:
+    response = requests.post(url, json=data)
+    response.raise_for_status()
+    print(response.json())
+except requests.exceptions.RequestException as e:
+    print(f"Error: {e}")
+```
+
+### cURL
+```bash
+curl -X POST https://miklium.vercel.app/api/python-sandbox \
+     -H "Content-Type: application/json" \
+     -d '{
+           "code": "print('\''Hello from MIKLIUM!'\'')\n",
+           "timeout": 10
+         }'
+```
+
+## API Responses
+
+### Success
+
+**Response structure:**
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `true` |
+| `exit_code` | `0` |
+| `stdout` | `Text`, Python program output |
+| `time_ms` | `Number`, Code execution time in milliseconds |
+
+**Success response example:**
+```javascript
+{
+  "success" : true,
+  "exit_code" : 0,
+  "stdout" : "5 + 6 = 11",
+  "time_ms" : 18
+}
+```
+
+### Error
+
+**Server error:**
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `false` |
+| `error` | `String`, Error message |
+
+**Code running error:**
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `false` |
+| `exit_code` | `Number`, Code of error |
+| `stdout` | `Text`, Python program output before error |
+| `time_ms` | `Number`, Code execution time in milliseconds |
+| `error` | `Text`, Python error message |
+
+
+**Error response examples:**
+```javascript
+{
+  "success" : false,
+  "error" : "Blocked: os — not allowed in sandbox"
+}
+```
+```javascript
+{
+  "success" : false,
+  "stdout" : "",
+  "exit_code" : 1,
+  "time_ms" : 22,
+  "error" : "Runtime error: Traceback (most recent call last):\n  line 1, in <module>\nImportError: cannot import name 'products' from 'itertools' (unknown location). Did you mean: 'product'?"
+}
+```
+
+## Limitations
+
+Unfortunately, the Python Sandbox is not designed to run very complex or potentially dangerous code, so it has several limitations.
+
+### Code Limitations:
+
+* Maximum number of characters of code: `15000`
+* Blocked modules that cannot be imported:
+  ```python
+  "os", "sys", "subprocess", "shutil", "pathlib", "glob", "tempfile" # File system
+  "socket", "urllib", "requests", "httpx", "http", "aiohttp" # Network
+  "ftplib", "smtplib", "imaplib", "poplib" # Mail protocols
+  "multiprocessing", "threading", "signal", "asyncio" # Concurrency
+  "ctypes", "cffi", "mmap" # Low-level operations
+  "pickle", "shelve", "marshal" # Unsafe serialization
+  "importlib", "code", "codeop" # Dynamic imports
+  "webbrowser", "antigravity", "turtle" # GUI and browser
+  "gc", "resource", "atexit" # System resources
+  "posix", "nt", "posixpath", "ntpath", "genericpath", "pwd", "grp", "fcntl", "termios", "tty", "pty" # Low-level system
+  "_posixsubprocess", "_signal" # Low-level process
+  "_frozen_importlib", "_frozen_importlib_external", "zipimport", "_imp" # Import system internals
+  ```
+* Third-party modules cannot be imported (standard library modules work fine: e.g. `json`, `math`, `random`, `datetime`, `itertools`, `collections`, `re`, and others)
+* Blocked build-in functions:
+  ```python
+  open() # File read or write
+  exec() # Execute arbitrary code
+  eval() # Evaluate strings as code
+  compile() # Compile code (set to None)
+  breakpoint() # Debugging (set to None)
+  __import__() # Dynamic import (intercepted)
+  exit() # Exit program (set to None)
+  quit() # Exit program (set to None)
+  ```
+* Blocked Dunder Attributes (sandbox escape prevention):
+  ```python
+  __subclasses__ # Get subclasses (for RCE)
+  __globals__ # Access global variables
+  __builtins__ # Access built-in functions
+  __code__ # Access bytecode
+  __bases__ # Parent classes
+  __mro__ # Method Resolution Order
+  __dict__ # Access object internals
+  __class__ # Class manipulation
+  __base__ # Direct parent class
+  __getattribute__ # Attribute access override
+  __setattr__ # Attribute setting override
+  __delattr__ # Attribute deletion override
+  ```
+
+### Code Running and Output Limits:
+
+* Maximum Python program output: `10 000` characters
+* Maximum Python code error message: `7 000` characters
+* Maximum timeout: `40` seconds (can be configured in Request Body)
+* Maximum of memory usage (RAM): `64` MB
+* Maximum of recursion (then function calls itself) depth: `200` levels. Example of recursion:
+  ```python
+  # Factorial calculator
+
+  def factorial(n):
+    if n <= 1:
+      return 1
+    return n * factorial(n - 1) # Function calls itself
+
+  print(factorial(5))  # 120
+  ```
+
+---
+# Search API Documentation
+
+## Navigation
+**[Back to MIKLIUM APIs navigation](#navigation)**
+
+
+- [Search API Documentation](#search-api-documentation)
+    - [Navigation](#navigation-5)
+    - [About MIKLIUM Search API](#about-miklium-search-api)
+    - [Request Body](#request-body-4)
+        - [GET Method](#get-method-2)
+        - [POST Method](#post-method-4)
+    - [Code Examples](#code-examples-4)
+    - [API Responses](#api-responses-4)
+        - [Success](#success-4)
+        - [Error](#error-4)
+    - [Additional Information](#additional-information)
+        - [Types of the Information](#types-of-the-information)
+        - [Choosing the Right Information Format](#choosing-the-right-information-format)
+    - [What Services Does This API Use?](#what-services-does-this-api-use-1)
+
+## About MIKLIUM Search API
+
+**Get information from the Internet on your request in a convenient format.** You can also configure how much data you need to receive and in what format. Our API uses the Yahoo Search engine and website scraping system.
+
+## Request Body
+
+Link: `https://miklium.vercel.app/api/search`
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `search` | Yes | Array | Search queries (maximum 3) |
+| `maxSmallSnippets`| No | Number | The number of short information for each request (by default `5`) |
+| `maxLargeSnippets` | No | Number | The number of long information for each request (by default `2`) |
+| `maxLargeSnippetSymbols` | No | Number | Maximum number of characters for one long information (by default `4500`) |
+
+### GET Method
+
+`https://miklium.vercel.app/api/search?search=Paste Your query(queries) here`
+
+If you want to write several requests at once (maximum 3), connect them with `~`. If you want to add additional parameters, write them through `&`.
+
+> [!IMPORTANT]
+> For GET Method the search requests should be URL-encoded!
+
+**Request Link Examples:**
+* `https://miklium.vercel.app/api/search?search=iPhone%20Air`
+* `https://miklium.vercel.app/api/search?search=iPhone%20Air~iPhone%2017%20Pro&maxSmallSnippets=3&maxLargeSnippets=0`
+
+### POST Method
+
+`https://miklium.vercel.app/api/search`
+
+```javascript
+{
+  "search": ["Paste Your query here", "If You need more requests at a time, add new objects to the list (maximum 3)"],
+  "maxSmallSnippets": 0, // Number (Not necessarily)
+  "maxLargeSnippets": 0, // Number (Not necessarily)
+  "maxLargeSnippetSymbols": 0 // Number (Not necessarily)
+}
+```
+
+**Request Body Examples (JSON):**
+```javascript
+{
+  "search": ["iPhone Air"]
+}
+```
+```javascript
+{
+  "search": ["iPhone Air", "iPhone 17 Pro"],
+  "maxSmallSnippets": 3,
+  "maxLargeSnippets": 0
+}
+```
+
+## Code Examples
+
+### JavaScript (Fetch)
+```javascript
+const url = 'https://miklium.vercel.app/api/search';
+const data = {
+  search: ["iPhone 17 Pro"],
+  maxSmallSnippets: 3,
+  maxLargeSnippets: 1
+};
+
+fetch(url, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+```
+
+### Python (Requests)
+```python
+import requests
+
+url = "https://miklium.vercel.app/api/search"
+data = {
+    "search": ["iPhone 17 Pro"],
+    "maxSmallSnippets": 3,
+    "maxLargeSnippets": 1
+}
+
+try:
+    response = requests.post(url, json=data)
+    response.raise_for_status()
+    print(response.json())
+except requests.exceptions.RequestException as e:
+    print(f"Error: {e}")
+```
+
+### cURL
+```bash
+curl -X POST https://miklium.vercel.app/api/search \
+     -H "Content-Type: application/json" \
+     -d '{
+           "search": ["iPhone 17 Pro"],
+           "maxSmallSnippets": 3,
+           "maxLargeSnippets": 1
+         }'
+```
+
+## API Responses
+
+### Success
+
+**General response:**
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `true` |
+| `results` | `Array with Dictionaries`, Search results |
+
+**Components of `results` elements:**
+| Parameter | Value |
+| :--- | :--- |
+| `query` | `String`, The request to which the information was found |
+| `symbols` | `Number`, The number of characters that this information contains |
+| `url` | `String`, Link to the source of the information |
+| `type` | `String: short OR long`, Type of the information |
+| `snippet` | `String`, The information itself |
+
+**Success response example:**
+```javascript
+{
+  "success": true,
+  "results": [
+    {
+      "symbols": 194,
+      "query": "iPhone Air ",
+      "url": "https://en.wikipedia.org/wiki/Iphone_air",
+      "type": "short",
+      "snippet": "iPhone Air is..."
+    },
+    {
+      "symbols": 4500,
+      "query": "iPhone 17 Pro Max",
+      "url": "https://www.pcmag.com/reviews/apple-iphone-17-pro-max",
+      "type": "long",
+      "snippet": "iPhone 17 Pro is…"
+    }
+  ]
+}
+```
+
+### Error
+
+| Parameter | Value |
+| :--- | :--- |
+| `success` | `false` |
+| `error` | `String`, Error message |
+
+**Error response example:**
+```javascript
+{
+  "success": false,
+  "error": "Invalid or missing 'search' parameter."
+}
+```
+
+## Additional Information
+
+### Types of the Information
+
+As you have already noticed, the API returns two types of information: `short` and `long`. How are they different? Information marked `short` is obtained from a brief description of the site from the search engine. And the `long` information is already the full text from the site.
+
+### Choosing the Right Information Format
+
+* You can change the amount of information issued and its type using parameters maxSmallSnippets` (the number of short information for each request (by default 5), `maxLargeSnippets` (the number of long information for each request (by default 2) and `maxLargeSnippetSymbols` (maximum number of characters for one long information (by default 4500).
+
+* By setting the parameter `maxSmallSnippets` to 0, you will receive only information with `long` type, full information from sites. And by setting `maxLargeSnippets` to 0, you will only receive information with `short` type, brief information.
+
+* The number behind the parameters `maxSmallSnippets` and `maxLargeSnippets` is responsible for the amount of relevant information for each request. For example, if we have two quires  in `search`, we set `maxSmallSnippets` to 2, and `maxLargeSnippets` to 1. Thus, 4 short information and 2 long will be found: 2 short and 1 long for each request.
+
+* The parameter `maxLargeSnippetSymbols` is responsible for the maximum number of characters in long information (by default 4500). If the limit is increased, the long information will be cut off.
+
+## What Services Does This API Use?
+
+- [Yahoo Search](https://search.yahoo.com)
 
 
 ---

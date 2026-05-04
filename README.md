@@ -19,14 +19,15 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 * **[Contribution Guidelines](docs/CONTRIBUTING.md)**
 
 ## Currently Available APIs:
-> **<!-- API_COUNT_START -->6<!-- API_COUNT_END --> APIs are available now:**
+> **<!-- API_COUNT_START -->7<!-- API_COUNT_END --> APIs are available now:**
 
 <!-- API_LIST_START -->
-  - [Chatbot API Documentation](api/chatbot/README.md)
-  - [Python Sandbox API Documentation](api/python-sandbox/README.md)
-  - [Miklium LLM Responses API Documentation](api/responses/README.md)
-  - [Search API Documentation](api/search/README.md)
   - [Apple Shortcuts Data API Documentation](api/shortcut-info/README.md)
+  - [Chatbot API Documentation](api/chatbot/README.md)
+  - [MIKLIUM LM](api/models/miklium-lm-nano/README.md)
+  - [Miklium LLM Responses API Documentation](api/responses/README.md)
+  - [Python Sandbox API Documentation](api/python-sandbox/README.md)
+  - [Search API Documentation](api/search/README.md)
   - [YouTube Transcription API Documentation](api/youtube-transcript/README.md)
 <!-- API_LIST_END -->
 
@@ -39,8 +40,8 @@ At MIKLIUM, we empower developers and users with high-quality, free APIs and sof
 | Name | Description | Creator |
 |------|-------------|---------|
 | [Vector AI Agent](https://routinehub.co/shortcut/24957/) | Do multiple actions on device and do everyday help. Powered by MIKLIUM for web search. | [@morriszdweck](https://github.com/morriszdweck) |
-| [Nuvole AI](https://routinehub.co/shortcut/18431/) | The most convenient and incredibly powerful AI shortcut without API keys or Apps, powered with MIKLIUM Search and YouTube Transcript. | [@mikl-shortcuts](https://github.com/mikl-shortcuts) |
-| [Nuvole AI Lite](https://routinehub.co/shortcut/18428/) | The most convenient AI Shortcut without API keys or Apps, powered with GPT-5.2 and MIKLIUM Internet Search API. | [@mikl-shortcuts](https://github.com/mikl-shortcuts) |
+| [Nuvole AI](https://routinehub.co/shortcut/18431/) | The most convenient and incredibly powerful AI shortcut without API keys or Apps, powered with multiple AI models and MIKLIUM Search, YouTube Transcript. | [@mikl-shortcuts](https://github.com/mikl-shortcuts) |
+| [Nuvole AI Lite](https://routinehub.co/shortcut/18428/) | The most convenient AI Shortcut without API keys or Apps, powered with ChatGPT and MIKLIUM Internet Search API. | [@mikl-shortcuts](https://github.com/mikl-shortcuts) |
 
 [See all projects →](docs/FEATURED_PROJECTS.md)
 <!-- FEATURED_PROJECTS_END -->
