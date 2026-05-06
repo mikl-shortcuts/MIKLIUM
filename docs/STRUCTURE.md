@@ -43,7 +43,7 @@ MIKLIUM is a platform of free, keyless serverless APIs. The codebase splits into
 | `api/` | Serverless API endpoints | Vercel |
 | `beta/` | Experimental APIs | — |
 | `models/` | Standalone AI/ML models | — |
-| `docs` | Documentation for MIKLIUM users and developers | - |
+| `docs/` | Documentation for MIKLIUM users and developers | — |
 | `webpage/` | Public website: docs viewer, playground, showcase, etc. | GitHub Pages |
 | Root files | README, LICENSE, etc. | — |
 
