@@ -21,6 +21,10 @@
   --text-primary: #fff;
   --text-secondary: #a1a1a6;
   --text-tertiary: #6e6e73;
+  --error: #ff453a;
+  --success: #22c55e;
+  --important: #ffc107;
+  --warning: #ff5722;
   --glass-bg: rgba(20, 20, 22, 0.6);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-highlight: rgba(255, 255, 255, 0.18);
@@ -461,7 +465,7 @@ nav .nav-links .nav-icons a {
 
 .error {
   text-align: center;
-  color: #ff453a;
+  color: var(--error);
   background: rgba(255, 69, 58, 0.06);
   padding: 2rem;
   border-radius: var(--radius-sm);
@@ -674,8 +678,8 @@ nav .nav-links .nav-icons a {
 
 .alert-important {
   background: rgba(255, 193, 7, 0.05);
-  border-color: #ffc107;
-  color: #ffc107;
+  border-color: var(--important);
+  color: var(--important);
 }
 
 .alert-note {
@@ -686,8 +690,8 @@ nav .nav-links .nav-icons a {
 
 .alert-warning {
   background: rgba(255, 87, 34, 0.05);
-  border-color: #ff5722;
-  color: #ff5722;
+  border-color: var(--warning);
+  color: var(--warning);
 }
 
 .anchor-header {

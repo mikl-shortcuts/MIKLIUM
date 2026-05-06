@@ -1,136 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page="design">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Design Guidelines - MIKLIUM</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta name="description" content="The visual language, core design tokens, and interactive components defining the MIKLIUM ecosystem.">
+    <meta property="og:title" content="Design Guidelines - MIKLIUM">
+    <meta property="og:description" content="The visual language, core design tokens, and interactive components defining the MIKLIUM ecosystem.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Preview.png">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#0155A1">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+    
+    <!-- External Dependencies: Icons and Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" integrity="sha512-EBLzUL8XLl+va/zAsmXwS7Z2B1F9HUHkZwyS/VKwh3S7T/U0nF4BaU29EP/ZSf6zgiIxYAnKLu6bJ8dqpmX5uw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Core MIKLIUM Design System -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Component Showcase Layout Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-        :root {
-            --accent: #0155A1;
-            --accent-hover: #1e70c1;
-            --accent-dark: #004382;
-            --accent-glow: rgba(1, 85, 161, 0.35);
-            --accent-border: rgba(1, 85, 161, 0.4);
-            --bg: #000;
-            --surface: rgba(255, 255, 255, 0.035);
-            --surface-hover: rgba(255, 255, 255, 0.08);
-            --text-primary: #fff;
-            --text-secondary: #a1a1a6;
-            --text-tertiary: #6e6e73;
-            --glass-bg: rgba(20, 20, 22, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-highlight: rgba(255, 255, 255, 0.18);
-            --error: #ff453a;
-            --success: #30d158;
-            --warning: #ffd60a;
-            --radius-card: 24px;
-            --radius-sm: 14px;
-            --radius-pill: 100px;
-            --font-main: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html { scroll-behavior: smooth; }
-
-        ::selection {
-            background: var(--accent);
-            color: #fff;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text-primary);
-            font-family: var(--font-main);
-            line-height: 1.6;
-            padding: 4rem 2rem;
-            display: flex;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -40%;
-            left: -20%;
-            width: 80%;
-            height: 80%;
-            background: radial-gradient(ellipse, rgba(1, 85, 161, 0.08) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            bottom: -30%;
-            right: -20%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(ellipse, rgba(1, 85, 161, 0.05) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
+        /* Base Container */
+        main {
+            flex: 1;
+            padding: 2rem;
             max-width: 960px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        h1 {
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            margin-bottom: 0.75rem;
-            background: linear-gradient(135deg, #fff 0%, var(--accent-hover) 50%, var(--text-secondary) 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 8s ease-in-out infinite;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.6;
-            max-width: 520px;
             margin: 0 auto;
+            width: 100%;
+            padding-top: calc(var(--nav-height) + 48px);
+            text-align: left;
         }
 
-        section {
-            margin-bottom: 4rem;
+        /* Page Header */
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 4.5rem;
+            animation: fadeInUp 0.9s var(--transition-smooth);
+        }
+        .page-header h2 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            margin-bottom: 0.6rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--accent-border);
+            box-shadow: inset 0 1px 0 var(--glass-highlight);
+            color: var(--accent);
+            padding: 0.35rem 1rem;
+            border-radius: var(--radius-pill);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+        }
+        .page-header > p {
+            max-width: 680px;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
-        section:nth-child(2) { animation: fadeInUp 0.7s ease-out 0.1s both; }
-        section:nth-child(3) { animation: fadeInUp 0.7s ease-out 0.2s both; }
-        section:nth-child(4) { animation: fadeInUp 0.7s ease-out 0.3s both; }
-        section:nth-child(5) { animation: fadeInUp 0.7s ease-out 0.4s both; }
-        section:nth-child(6) { animation: fadeInUp 0.7s ease-out 0.5s both; }
-        section:nth-child(7) { animation: fadeInUp 0.7s ease-out 0.6s both; }
-        section:nth-child(8) { animation: fadeInUp 0.7s ease-out 0.7s both; }
+        /* Grid System */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
-        h2 {
+        /* Sections & Titles */
+        section { margin-bottom: 4.5rem; animation: fadeInUp 0.8s var(--transition-smooth) both; }
+        section:nth-child(2) { animation-delay: 0.1s; }
+        section:nth-child(3) { animation-delay: 0.2s; }
+        section:nth-child(4) { animation-delay: 0.3s; }
+        section:nth-child(5) { animation-delay: 0.4s; }
+        section:nth-child(6) { animation-delay: 0.5s; }
+        section:nth-child(7) { animation-delay: 0.6s; }
+        section:nth-child(8) { animation-delay: 0.7s; }
+        section:nth-child(9) { animation-delay: 0.8s; }
+        section:nth-child(10) { animation-delay: 0.9s; }
+        section:nth-child(11) { animation-delay: 1.0s; }
+        section:nth-child(12) { animation-delay: 1.1s; }
+
+        h2.section-title {
             font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
@@ -142,121 +106,82 @@
             border-bottom: 1px solid rgba(255,255,255,0.06);
             line-height: 1.2;
         }
-
-        h2 i {
+        h2.section-title i {
             color: var(--accent);
             font-size: 1rem;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             display: grid;
             place-items: center;
             background: var(--accent-glow);
-            border-radius: 6px;
+            border-radius: 8px;
             flex-shrink: 0;
-            transform: translateY(4px);
+            border: 1px solid rgba(1, 85, 161, 0.2);
         }
 
-        h2 i::before {
-            display: block;
+        /* Token Display Formatting (Label -> Token -> Value) */
+        .token-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .token-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .token-label {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .token-val-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .token {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-hover);
+            background: rgba(255,255,255,0.05);
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: inline-block;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .token:hover { background: rgba(1, 85, 161, 0.15); border-color: var(--accent-border); }
+        .token-value {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            min-width: 60px;
+            text-align: right;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-card);
-            padding: 1.75rem;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
-            opacity: 0.5;
-        }
-
-        .card:hover {
-            background: var(--surface-hover);
-            border-color: var(--accent-border);
-            transform: translateY(-3px);
-            box-shadow:
-                0 0 0 0.5px rgba(255,255,255,0.06),
-                0 12px 40px rgba(0, 0, 0, 0.4),
-                0 0 30px var(--accent-glow);
-        }
-
+        /* Color Swatches */
         .color-swatch {
             height: 72px;
             border-radius: 12px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             border: 1px solid rgba(255,255,255,0.08);
             cursor: pointer;
-            transition: var(--transition);
+            transition: var(--transition-smooth);
             position: relative;
         }
-
-        .color-swatch:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
+        .color-swatch:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
         .color-swatch::after {
             content: 'Click to copy';
             position: absolute;
             bottom: 6px;
             right: 8px;
             font-size: 0.6rem;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.8);
             opacity: 0;
             transition: opacity 0.3s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
-
         .color-swatch:hover::after { opacity: 1; }
-
-        .token {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--accent-hover);
-            background: rgba(255,255,255,0.05);
-            padding: 0.2rem 0.55rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.06);
-            display: inline-block;
-            margin-top: 0.35rem;
-            cursor: pointer;
-            transition: var(--transition);
-            user-select: all;
-        }
-
-        .token:hover {
-            background: rgba(1, 85, 161, 0.15);
-            border-color: var(--accent-border);
-        }
-
-        .font-spec {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
         .spec-label {
             font-size: 0.7rem;
             color: var(--text-tertiary);
@@ -264,277 +189,431 @@
             letter-spacing: 1.2px;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            display: block;
         }
 
-        .card p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.4rem;
-        }
-
-        .card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .type-scale {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
+        /* Typography */
+        .type-scale { display: flex; flex-direction: column; gap: 0.2rem; }
         .type-row {
             display: flex;
             align-items: baseline;
             gap: 1rem;
-            padding: 0.6rem 0;
+            padding: 0.8rem 0;
             border-bottom: 1px solid rgba(255,255,255,0.04);
         }
+        .type-row:last-child { border-bottom: none; }
+        .type-sample { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+        .type-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-tertiary); }
 
-        .type-sample {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .type-meta {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            white-space: nowrap;
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-            margin: 3rem 0;
-        }
-
-        .btn-demo {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.7rem 1.6rem;
-            border-radius: var(--radius-pill);
-            font-weight: 600;
-            font-size: 0.88rem;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: var(--transition);
-            text-decoration: none;
-        }
-
-        .btn-demo i {
-            font-size: 0.95rem;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-primary-demo {
-            background: var(--accent);
-            color: #fff;
-            border-color: rgba(255,255,255,0.1);
-            box-shadow: 0 4px 20px rgba(1, 85, 161, 0.4);
-        }
-
-        .btn-primary-demo:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 28px rgba(1, 85, 161, 0.5);
-        }
-
-        .btn-ghost-demo {
-            background: var(--glass-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--glass-border);
-        }
-
-        .btn-ghost-demo:hover {
-            background: var(--surface-hover);
-            border-color: rgba(255,255,255,0.25);
-            transform: translateY(-2px);
-        }
-
-        .spacing-block {
-            background: var(--accent-glow);
-            border: 1px dashed var(--accent-border);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
+        /* Links & Inline Code */
+        .demo-link {
             color: var(--accent-hover);
-        }
-
-        .toast-msg {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            padding: 0.6rem 1.2rem;
-            border-radius: var(--radius-pill);
-            background: rgba(20, 20, 22, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            font-size: 0.82rem;
-            font-weight: 500;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .toast-msg.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .toast-msg i { color: var(--success); }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
             text-decoration: none;
-            margin-bottom: 2rem;
-            transition: var(--transition);
-            font-size: 0.9rem;
+            transition: opacity 0.3s, text-shadow 0.3s, border-bottom-color 0.3s;
+            border-bottom: 1px solid rgba(77, 184, 255, 0.3);
+            font-weight: 500;
+        }
+        .demo-link:hover {
+            opacity: 1;
+            border-bottom-color: var(--accent-hover);
+            text-shadow: 0 0 8px rgba(77, 184, 255, 0.4);
+        }
+        .demo-inline-code {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            color: var(--accent-hover);
+            font-size: 0.84rem;
+            border: 1px solid rgba(110, 194, 255, 0.1);
         }
 
-        .back-link:hover {
+        /* Alerts & Callouts */
+        .alert {
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .alert-important { background: rgba(255, 193, 7, 0.05); border-color: var(--important); color: var(--important); }
+        .alert-note { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+        .alert-warning { background: rgba(255, 87, 34, 0.05); border-color: var(--warning); color: var(--warning); }
+        .demo-blockquote {
+            border-left: 3px solid var(--accent-border);
+            padding: 0.8rem 1.2rem;
+            margin: 1.2rem 0;
+            background: var(--accent-glow);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* Form Elements */
+        .form-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+        .form-field label { font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); }
+        .form-field input, .form-field textarea {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
             color: var(--text-primary);
-            transform: translateX(-4px);
+            padding: 0.65rem 0.85rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            outline: none;
+            transition: var(--transition-smooth);
+            font-family: inherit;
         }
+        .form-field input:focus, .form-field textarea:focus {
+            border-color: var(--accent);
+            background: var(--surface-hover);
+            box-shadow: 0 0 0 3px rgba(1, 85, 161, 0.12);
+        }
+        
+        .custom-select-wrapper { position: relative; width: 100%; }
+        .custom-select-trigger {
+            width: 100%; background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-primary); padding: 0.65rem 2.2rem 0.65rem 0.85rem;
+            border-radius: 12px; font-size: 0.85rem; cursor: pointer;
+            transition: var(--transition-smooth); position: relative;
+        }
+        .custom-select-trigger::after {
+            content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            border-left: 4px solid transparent; border-right: 4px solid transparent;
+            border-top: 5px solid var(--text-tertiary); transition: transform 0.25s;
+        }
+        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); border-radius: 12px 12px 0 0; }
+        .custom-select-wrapper.open .custom-select-trigger::after { transform: translateY(-50%) rotate(180deg); }
+        .custom-select-dropdown {
+            position: absolute; top: 100%; left: 0; right: 0; background: #1a1a1e;
+            border: 1px solid var(--accent); border-top: none; border-radius: 0 0 12px 12px;
+            max-height: 0; overflow: hidden; opacity: 0; z-index: 50; transition: var(--transition-smooth);
+        }
+        .custom-select-wrapper.open .custom-select-dropdown { max-height: 200px; opacity: 1; }
+        .custom-select-option { padding: 0.6rem 0.85rem; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; }
+        .custom-select-option:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
 
-        .back-link i {
-            line-height: 1;
-            display: flex;
-            align-items: center;
+        .checkbox-row { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary); }
+        .custom-checkbox {
+            width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--text-tertiary);
+            background: var(--surface); display: flex; align-items: center; justify-content: center; transition: var(--transition-smooth);
         }
+        .custom-checkbox i { font-size: 0.55rem; color: transparent; transition: var(--transition-smooth); }
+        .checkbox-row input[type="checkbox"] { display: none; }
+        .checkbox-row input[type="checkbox"]:checked + .custom-checkbox { background: var(--accent); border-color: var(--accent); }
+        .checkbox-row input[type="checkbox"]:checked + .custom-checkbox i { color: #fff; }
+
+        /* Badges */
+        .method-badge {
+            display: inline-flex; padding: 0.2rem 0.5rem; border-radius: 4px;
+            font-size: 0.65rem; font-weight: 700; font-family: var(--font-mono); letter-spacing: 0.5px;
+        }
+        .method-badge.post { background: rgba(34, 197, 94, 0.12); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
+        .method-badge.get { background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.8rem;
+            border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 600; border: 1px solid;
+        }
+        .status-badge.idle { background: var(--surface); border-color: var(--border); color: var(--text-tertiary); }
+        .status-badge.success { background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.25); color: var(--success); }
+        .status-badge.error { background: rgba(255, 69, 58, 0.08); border-color: rgba(255, 69, 58, 0.25); color: var(--error); }
+
+        /* Code Blocks */
+        .code-block-wrapper { position: relative; margin: 1.5rem 0; box-shadow: 0 4px 24px rgba(0,0,0,0.3); border-radius: 12px; }
+        .code-block-header {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(13, 17, 23, 0.9); border: 1px solid var(--border);
+            border-bottom: none; border-radius: 12px 12px 0 0; padding: 0.5rem 0.85rem;
+        }
+        .code-block-lang { display: flex; align-items: center; gap: 0.45rem; font-size: 0.75rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px;}
+        .code-copy-btn {
+            display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-tertiary); cursor: pointer; transition: var(--transition-smooth); font-size: 0.7rem; font-weight: 500;
+        }
+        .code-copy-btn:hover { color: var(--text-primary); border-color: var(--border-hover); background: var(--surface-hover); }
+        .code-copy-btn.copied { color: var(--success); border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.08); }
+        
+        .code-block-wrapper pre {
+            margin: 0 !important; border-radius: 0 0 12px 12px !important;
+            border: 1px solid var(--border) !important; border-top: none !important;
+            background: rgba(13, 17, 23, 0.95) !important; padding: 1.2rem; overflow-x: auto;
+        }
+        .code-block-wrapper pre code { 
+            font-size: 0.84rem; line-height: 1.7; font-family: var(--font-mono); 
+            background: transparent; color: #e6edf3; padding: 0; letter-spacing: 0;
+        }
+        .code-caption { font-size: 0.85rem; color: var(--text-tertiary); text-align: left; margin: 0.5rem 0 2rem 0; border-left: 2px solid var(--accent); padding-left: 0.8rem; }
+
+        /* Floating UI (Toast & Scroll) */
+        .scroll-top-btn {
+            position: fixed; bottom: 0.2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+            width: 40px; height: 40px; background: rgba(20, 20, 22, 0.6); backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50%; color: #fff;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 90;
+            opacity: 0; pointer-events: none; transition: transform 0.4s ease-in, opacity 0.4s ease-in, background 0.2s, box-shadow 0.2s;
+            box-shadow: inset 1px 1px 0 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .scroll-top-btn i { font-size: 1rem; -webkit-text-stroke: 1px #fff; }
+        .scroll-top-btn.visible { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-out; }
+        .scroll-top-btn.visible:hover {
+            background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) translateY(-4px); box-shadow: 0 0 20px var(--accent-glow), 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+        
+        .toast {
+            position: fixed; bottom: 3.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+            padding: 0.6rem 1.2rem; border-radius: var(--radius-pill); background: rgba(20, 20, 22, 0.95);
+            backdrop-filter: blur(20px); border: 1px solid var(--glass-border); color: var(--text-primary);
+            font-size: 0.82rem; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.4s var(--transition-smooth);
+            z-index: 200; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast i { color: var(--success); }
+
+        /* Spacing Scale blocks */
+        .spacing-block { background: var(--accent-glow); border: 1px dashed var(--accent-border); border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-hover); }
 
         @media (max-width: 700px) {
-            body { padding: 2rem 1rem; }
             .grid-3 { grid-template-columns: 1fr; }
             .grid { grid-template-columns: 1fr; }
             .type-row { flex-direction: column; gap: 0.25rem; }
+            .code-block-wrapper pre code { font-size: 0.8rem; } 
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../README.md" class="back-link"><i class="fas fa-arrow-left"></i> Back to Repository</a>
-        <header>
-            <h1>Design Guidelines</h1>
-            <p class="subtitle">The visual language, core design tokens, and component patterns that define the MIKLIUM ecosystem.</p>
-        </header>
 
+    <!-- =========================================================
+         GLOBAL NAVIGATION
+         Main header navigation component. Adapts to mobile viewports 
+         by collapsing into a hamburger menu.
+         ========================================================= -->
+    <nav>
+        <div class="nav-top">
+            <a href="index.html" class="nav-brand">
+                <img src="assets/Logo.svg" alt="" class="nav-logo">
+                MIKLIUM
+            </a>
+            <button class="nav-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+            <ul class="nav-links">
+                <li><a href="index.html" data-nav="home">Home</a></li>
+                <li><a href="projects.html" data-nav="projects">Projects</a></li>
+                <li><a href="GetStarted.html" data-nav="getstarted">Get Started</a></li>
+                <li><a href="APIDOCS.html" data-nav="apidocs">API Docs</a></li>
+                <li><a href="playground.html" data-nav="playground">Playground</a></li>
+                <li><a href="support.html" data-nav="support">Support</a></li>
+                <li class="nav-icons">
+                    <a href="https://discord.gg/6HUJTXh45t" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://github.com/MIKLIUM-Team" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-mobile-links">
+            <a href="index.html" data-nav="home"><i class="fas fa-house"></i> Home</a>
+            <a href="projects.html" data-nav="projects"><i class="fas fa-cube"></i> Featured Projects</a>
+            <a href="GetStarted.html" data-nav="getstarted"><i class="fas fa-play"></i> Get Started</a>
+            <a href="APIDOCS.html" data-nav="apidocs"><i class="fas fa-book"></i> API Docs</a>
+            <a href="playground.html" data-nav="playground"><i class="fas fa-flask"></i> API Playground</a>
+            <a href="support.html" data-nav="support"><i class="fas fa-headset"></i> Support</a>
+            <div class="nav-mobile-icons">
+                <a href="https://discord.gg/6HUJTXh45t" target="_blank"><i class="fab fa-discord"></i></a>
+                <a href="https://github.com/MIKLIUM-Team" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- =========================================================
+         MAIN CONTENT CONTAINER
+         ========================================================= -->
+    <main>
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2>Design Guidelines</h2>
+            <span class="header-badge"><i class="fas fa-paint-brush"></i> Component Showcase</span>
+            <p>
+                The visual language, core design tokens, and interactive components that define the MIKLIUM ecosystem.
+            </p>
+            <p>
+                For more info about webpages and backend structures, refer to our <a href="https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/docs/STRUCTURE.md" target="_blank" class="demo-link">STRUCTURE.md</a>. 
+                All variables shown below can be found in the global <a href="https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/webpage/css/style.css" target="_blank" class="demo-link">style.css</a> file.
+                For ready-made blocks, you can check the <a href="https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/docs/DESIGN_GUIDELINES.html" target="_blank" class="demo-link">code of this website</a>.
+            </p>
+        </div>
+
+        <!-- 1. COLOR PALETTE -->
         <section>
-            <h2><i class="fas fa-palette fa-fw"></i> Color Palette</h2>
+            <h2 class="section-title"><i class="fas fa-palette"></i> Color Palette</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                Core brand colors and semantic states. Click any swatch or variable token to copy it to your clipboard.
+            </p>
             <div class="grid grid-3">
-                <div class="card">
-                    <div class="color-swatch" style="background: #0155A1;" data-color="#0155A1"></div>
-                    <div class="spec-label">Primary Accent</div>
-                    <h3>MIKLIUM Blue</h3>
-                    <span class="token">#0155A1</span>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--accent);" data-copy="var(--accent)"></div>
+                    <span class="spec-label">Primary Accent</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--accent);">MIKLIUM Blue</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--accent)">var(--accent)</span>
+                            <span class="token-value">#0155A1</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="color-swatch" style="background: #1e70c1;" data-color="#1E70C1"></div>
-                    <div class="spec-label">Accent Hover</div>
-                    <h3>Active Blue</h3>
-                    <span class="token">#1E70C1</span>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--accent-hover);" data-copy="var(--accent-hover)"></div>
+                    <span class="spec-label">Accent Hover</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--accent-hover);">Active Blue</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--accent-hover)">var(--accent-hover)</span>
+                            <span class="token-value">#1E70C1</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="color-swatch" style="background: #004382;" data-color="#004382"></div>
-                    <div class="spec-label">Accent Dark</div>
-                    <h3>Deep Blue</h3>
-                    <span class="token">#004382</span>
-                </div>
-                <div class="card">
-                    <div class="color-swatch" style="background: #000;" data-color="#000000"></div>
-                    <div class="spec-label">Background</div>
-                    <h3>OLED Black</h3>
-                    <span class="token">#000000</span>
-                </div>
-                <div class="card">
-                    <div class="color-swatch" style="background: #fff;" data-color="#FFFFFF"></div>
-                    <div class="spec-label">Primary Text</div>
-                    <h3>Pure White</h3>
-                    <span class="token">#FFFFFF</span>
-                </div>
-                <div class="card">
-                    <div class="color-swatch" style="background: #a1a1a6;" data-color="#A1A1A6"></div>
-                    <div class="spec-label">Secondary Text</div>
-                    <h3>Muted Gray</h3>
-                    <span class="token">#A1A1A6</span>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--bg);" data-copy="var(--bg)"></div>
+                    <span class="spec-label">Background</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--bg); text-shadow: 0 0 8px rgba(255,255,255,0.7), 0 0 16px rgba(255,255,255,0.4);">OLED Black</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--bg)">var(--bg)</span>
+                            <span class="token-value">#000000</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div style="margin-top: 1.5rem;">
-                <div class="grid grid-3">
-                    <div class="card">
-                        <div class="color-swatch" style="background: #ff453a;" data-color="#FF453A"></div>
-                        <div class="spec-label">Semantic — Error</div>
-                        <h3>System Red</h3>
-                        <span class="token">#FF453A</span>
+            <!-- Text Colors -->
+            <div class="grid grid-3" style="margin-top: 1.25rem;">
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--text-primary);" data-copy="var(--text-primary)"></div>
+                    <span class="spec-label">Text — Primary</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--text-primary);">Pure White</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--text-primary)">var(--text-primary)</span>
+                            <span class="token-value">#FFFFFF</span>
+                        </div>
                     </div>
-                    <div class="card">
-                        <div class="color-swatch" style="background: #30d158;" data-color="#30D158"></div>
-                        <div class="spec-label">Semantic — Success</div>
-                        <h3>System Green</h3>
-                        <span class="token">#30D158</span>
+                </div>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--text-secondary);" data-copy="var(--text-secondary)"></div>
+                    <span class="spec-label">Text — Secondary</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--text-secondary);">Muted Gray</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--text-secondary)">var(--text-secondary)</span>
+                            <span class="token-value">#A1A1A6</span>
+                        </div>
                     </div>
-                    <div class="card">
-                        <div class="color-swatch" style="background: #ffd60a;" data-color="#FFD60A"></div>
-                        <div class="spec-label">Semantic — Warning</div>
-                        <h3>System Yellow</h3>
-                        <span class="token">#FFD60A</span>
+                </div>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--text-tertiary);" data-copy="var(--text-tertiary)"></div>
+                    <span class="spec-label">Text — Tertiary</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--text-tertiary);">Deep Gray</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--text-tertiary)">var(--text-tertiary)</span>
+                            <span class="token-value">#6E6E73</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Semantic Colors -->
+            <div class="grid grid-3" style="margin-top: 1.25rem;">
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--error);" data-copy="var(--error)"></div>
+                    <span class="spec-label">Semantic — Error</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--error);">System Red</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--error)">var(--error)</span>
+                            <span class="token-value">#FF453A</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--success);" data-copy="var(--success)"></div>
+                    <span class="spec-label">Semantic — Success</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--success);">System Green</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--success)">var(--success)</span>
+                            <span class="token-value">#22C55E</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--important);" data-copy="var(--important)"></div>
+                    <span class="spec-label">Semantic — Important</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--important);">System Yellow</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--important)">var(--important)</span>
+                            <span class="token-value">#FFC107</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding: 1.5rem; text-align: left;">
+                    <div class="color-swatch" style="background: var(--warning);" data-copy="var(--warning)"></div>
+                    <span class="spec-label">Semantic — Warning</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem; color: var(--warning);">System Orange</h3>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--warning)">var(--warning)</span>
+                            <span class="token-value">#FF5722</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="divider"></div>
-
+        <!-- 2. TYPOGRAPHY -->
         <section>
-            <h2><i class="fas fa-font fa-solid fa-fw"></i> Typography</h2>
+            <h2 class="section-title"><i class="fas fa-font"></i> Typography & Type Scale</h2>
             <div class="grid">
-                <div class="card">
-                    <div class="spec-label">Primary Sans-Serif</div>
-                    <div class="font-spec">SF Pro Display</div>
-                    <p>System font stack for headings and body text. Falls back to Segoe UI → Roboto → Helvetica → Arial.</p>
-                    <span class="token" style="margin-top: 0.75rem; font-size: 0.7rem; word-break: break-all;">-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif</span>
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Primary Sans-Serif</span>
+                    <div style="font-size: 2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">SF Pro Display</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">System font stack utilized for all core UI elements, headings, and paragraph body text. Clean and readable.</p>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--font-main)">var(--font-main)</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="spec-label">Monospace</div>
-                    <div class="font-spec" style="font-family: var(--font-mono); font-size: 1.5rem;">JetBrains Mono</div>
-                    <p>Used for code snippets, tokens, and technical values. Loaded via Google Fonts at weights 400, 500, 600.</p>
-                    <span class="token" style="margin-top: 0.75rem; font-size: 0.7rem;">'JetBrains Mono', monospace</span>
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Monospace</span>
+                    <div style="font-family: var(--font-mono); font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">JetBrains Mono</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Used for JSON code snippets, documentation blocks, badges, and technical values to ensure alignment.</p>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--font-mono)">var(--font-mono)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card" style="margin-top: 1.25rem;">
-                <div class="spec-label">Type Scale</div>
-                <div class="type-scale" style="margin-top: 0.75rem;">
+            <!-- Type Scale -->
+            <div class="glass-card" style="margin-top: 1.25rem; text-align: left;">
+                <span class="spec-label">Type Scale Reference</span>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Standardized typography scale used across all pages ensuring responsive resizing via CSS clamp.</p>
+                <div class="type-scale">
                     <div class="type-row">
                         <span class="type-sample" style="font-size: 2.8rem; font-weight: 800; letter-spacing: -1.5px;">Page Title</span>
                         <span class="type-meta">clamp(2.2rem, 5vw, 3.5rem) / 800</span>
@@ -544,22 +623,14 @@
                         <span class="type-meta">clamp(1.8rem, 4vw, 2.8rem) / 700</span>
                     </div>
                     <div class="type-row">
-                        <span class="type-sample" style="font-size: 1.4rem; font-weight: 700;">Subsection</span>
-                        <span class="type-meta">1.4rem / 700</span>
-                    </div>
-                    <div class="type-row">
-                        <span class="type-sample" style="font-size: 1.1rem; font-weight: 600;">Card Title</span>
-                        <span class="type-meta">1.1rem / 600</span>
-                    </div>
-                    <div class="type-row">
-                        <span class="type-sample" style="font-size: 1rem; color: var(--text-secondary);">Body text for descriptions and paragraph content</span>
+                        <span class="type-sample" style="font-size: 1rem; color: var(--text-secondary);">Body text for standard descriptions and paragraphs.</span>
                         <span class="type-meta">1rem / 400</span>
                     </div>
                     <div class="type-row">
                         <span class="type-sample" style="font-size: 0.84rem; font-family: var(--font-mono); color: var(--accent-hover);">code_snippet</span>
                         <span class="type-meta">0.84rem / mono 400</span>
                     </div>
-                    <div class="type-row" style="border: none;">
+                    <div class="type-row">
                         <span class="type-sample" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-tertiary); font-weight: 600;">SPEC LABEL</span>
                         <span class="type-meta">0.7rem / 600 / uppercase</span>
                     </div>
@@ -567,167 +638,485 @@
             </div>
         </section>
 
-        <div class="divider"></div>
-
+        <!-- 3. RESPONSIVE DESIGN & LAYOUT -->
         <section>
-            <h2><i class="fas fa-layer-group fa-fw"></i> Components</h2>
+            <h2 class="section-title"><i class="fas fa-mobile-alt"></i> Responsive Layout & Grid</h2>
             <div class="grid">
-                <div class="card">
-                    <div class="spec-label">Border Radius</div>
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Content Width Constraints</span>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">
+                        All pages restrict the main content width to ensure readability on ultrawide monitors, while maintaining flexible padding for mobile screens.
+                    </p>
+                    <div class="token-row">
+                        <span class="token-label">Max Container</span>
+                        <div class="token-val-group">
+                            <span class="token-value">960px</span>
+                        </div>
+                    </div>
+                    <div class="token-row">
+                        <span class="token-label">Navigation Bar</span>
+                        <div class="token-val-group">
+                            <span class="token-value">min(92%, 820px)</span>
+                        </div>
+                    </div>
+                    <div class="token-row">
+                        <span class="token-label">Global Body Padding</span>
+                        <div class="token-val-group">
+                            <span class="token-value">2rem</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">CSS Grid Columns</span>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">
+                        The layout heavily utilizes CSS Grid with <code>auto-fit</code> and <code>minmax</code> properties. On mobile devices (<code>max-width: 700px</code>), grids naturally collapse into a single column.
+                    </p>
+                    <div class="token-row">
+                        <span class="token-label">Standard Grid (.grid)</span>
+                        <div class="token-val-group">
+                            <span class="token-value">minmax(260px, 1fr)</span>
+                        </div>
+                    </div>
+                    <div class="token-row">
+                        <span class="token-label">3-Column (.grid-3)</span>
+                        <div class="token-val-group">
+                            <span class="token-value">repeat(3, 1fr)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MOTION & TRANSITIONS -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-bolt"></i> Motion & Transitions</h2>
+            <div class="grid">
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Easing Curve & Global Timing</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem;">Smooth & Snappy</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">
+                        Applied globally to button hovers, card lifts, and interactive forms ensuring a fluid and snappy feel.
+                    </p>
+                    <div class="token-row">
+                        <span class="token-label">CSS Variable</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="var(--transition-smooth)">var(--transition-smooth)</span>
+                            <span class="token-value">cubic-bezier(0.4, 0, 0.2, 1)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Entrance Animation (Staggered)</span>
+                    <h3 style="margin: 0.2rem 0 1rem 0; font-size: 1.05rem;">Fade In Up</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem;">
+                        All content sections animate in using <span class="demo-inline-code">translateY(24px)</span> scaling to 0px. Subsequent sibling sections are staggered with a delay of <span class="demo-inline-code">0.1s</span>.
+                    </p>
+                    <div class="token-row">
+                        <span class="token-label">CSS Property</span>
+                        <div class="token-val-group">
+                            <span class="token" data-copy="animation: fadeInUp 0.8s var(--transition-smooth) both;">fadeInUp 0.8s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SURFACE & BORDERS -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-layer-group"></i> Surface Components</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                MIKLIUM relies heavily on dark glassmorphism. Backgrounds are blurred, slightly saturated, and accented with a subtle inner border highlight to establish depth.
+            </p>
+            <div class="grid">
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Border Radius Tokens</span>
                     <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: end;">
-                        <div style="width: 64px; height: 64px; border: 2px solid var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 0.65rem; color: var(--text-tertiary);">24px</span>
+                        <div style="width: 64px; height: 64px; border: 2px solid var(--accent); border-radius: 24px; display: grid; place-items: center;"><span style="font-size: 0.65rem; color: var(--text-tertiary);">24px</span></div>
+                        <div style="width: 48px; height: 48px; border: 2px solid var(--accent); border-radius: 14px; display: grid; place-items: center;"><span style="font-size: 0.6rem; color: var(--text-tertiary);">14px</span></div>
+                        <div style="width: 36px; height: 36px; border: 2px solid var(--accent); border-radius: 100px; display: grid; place-items: center;"><span style="font-size: 0.55rem; color: var(--text-tertiary);">pill</span></div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <div class="token-row">
+                            <span class="token-label">Main Containers</span>
+                            <div class="token-val-group">
+                                <span class="token" data-copy="var(--radius-card)">var(--radius-card)</span>
+                                <span class="token-value">24px</span>
+                            </div>
                         </div>
-                        <div style="width: 48px; height: 48px; border: 2px solid var(--accent); border-radius: 14px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 0.6rem; color: var(--text-tertiary);">14px</span>
+                        <div class="token-row">
+                            <span class="token-label">Inputs & Alerts</span>
+                            <div class="token-val-group">
+                                <span class="token" data-copy="var(--radius-sm)">var(--radius-sm)</span>
+                                <span class="token-value">14px</span>
+                            </div>
                         </div>
-                        <div style="width: 36px; height: 36px; border: 2px solid var(--accent); border-radius: 100px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 0.55rem; color: var(--text-tertiary);">pill</span>
+                        <div class="token-row">
+                            <span class="token-label">Buttons & Badges</span>
+                            <div class="token-val-group">
+                                <span class="token" data-copy="var(--radius-pill)">var(--radius-pill)</span>
+                                <span class="token-value">100px</span>
+                            </div>
                         </div>
                     </div>
-                    <p>Card: <span class="token">24px</span></p>
-                    <p>Small: <span class="token">14px</span></p>
-                    <p>Pill / Button: <span class="token">100px</span></p>
                 </div>
-                <div class="card">
-                    <div class="spec-label">Glassmorphism</div>
-                    <div style="margin: 1rem 0; padding: 1.25rem; background: rgba(20,20,22,0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; position: relative; overflow: hidden;">
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Glassmorphism Properties</span>
+                    <div style="margin: 1rem 0 1.5rem 0; padding: 1.25rem; background: rgba(20,20,22,0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; position: relative; overflow: hidden;">
                         <div style="position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);"></div>
-                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Live glass panel</span>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Interactive glass panel layer</span>
                     </div>
-                    <p>Backdrop blur: <span class="token">blur(20px)</span></p>
-                    <p>Saturate: <span class="token">saturate(180%)</span></p>
-                    <p>Background: <span class="token">rgba(20, 20, 22, 0.6)</span></p>
-                    <p>Border: <span class="token">rgba(255, 255, 255, 0.1)</span></p>
-                    <p>Top highlight: <span class="token">rgba(255, 255, 255, 0.18)</span></p>
+                    
+                    <div>
+                        <div class="token-row">
+                            <span class="token-label">Base Background</span>
+                            <div class="token-val-group">
+                                <span class="token" data-copy="var(--glass-bg)">var(--glass-bg)</span>
+                                <span class="token-value">rgba(20,20,22, 0.6)</span>
+                            </div>
+                        </div>
+                        <div class="token-row">
+                            <span class="token-label">Base Outer Border</span>
+                            <div class="token-val-group">
+                                <span class="token" data-copy="var(--glass-border)">var(--glass-border)</span>
+                                <span class="token-value">rgba(255,255,255, 0.1)</span>
+                            </div>
+                        </div>
+                        <div class="token-row">
+                            <span class="token-label">Top Inner Highlight</span>
+                            <div class="token-val-group">
+                                <span class="token" data-copy="var(--glass-highlight)">var(--glass-highlight)</span>
+                                <span class="token-value">rgba(255,255,255, 0.18)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <div class="divider"></div>
-
+        <!-- 6. ALERTS & CALLOUTS -->
         <section>
-            <h2><i class="fas fa-hand-pointer fa-fw"></i> Buttons</h2>
-            <div class="card">
-                <div class="spec-label">Interactive Demos</div>
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.25rem 0;">
-                    <button class="btn-demo btn-primary-demo"><i class="fas fa-rocket"></i> Primary Action</button>
-                    <button class="btn-demo btn-ghost-demo"><i class="fas fa-code"></i> Ghost Button</button>
+            <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> Alerts & Callouts</h2>
+            <div class="glass-card" style="text-align: left;">
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Information blocks generated globally within markdown documentation to highlight critical information, notes, and warnings.
+                </p>
+
+                <div class="alert alert-important">
+                    <strong>Important!</strong> Represents a critical piece of information that requires the user's attention. Maps to <span class="demo-inline-code">[!IMPORTANT]</span> in GitHub Markdown.
                 </div>
-                <p>Primary buttons use <span class="token">var(--accent)</span> with a <span class="token">0 4px 20px</span> glow shadow.</p>
-                <p>Ghost buttons use <span class="token">var(--glass-bg)</span> with a subtle border.</p>
-                <p>All buttons use <span class="token">border-radius: 100px</span> (pill shape), <span class="token">font-weight: 600</span>, and translate <span class="token">-2px</span> on hover.</p>
+                <div class="alert alert-warning">
+                    <strong>Warning!</strong> Used to warn users about potential errors or destructive actions. Maps to <span class="demo-inline-code">[!WARNING]</span> in GitHub Markdown.
+                </div>
+                <div class="alert alert-note">
+                    <strong>Note:</strong> Used for general tips, recommendations, or extra context. Maps to <span class="demo-inline-code">[!NOTE]</span> in GitHub Markdown.
+                </div>
+                <div class="demo-blockquote">
+                    <p>"Blockquotes are used to emphasize text or quote external sources within documentation blocks."</p>
+                </div>
             </div>
         </section>
 
-        <div class="divider"></div>
-
+        <!-- 7. BADGES & TAGS -->
         <section>
-            <h2><i class="fas fa-arrows-alt fa-fw"></i> Spacing</h2>
-            <div class="card">
-                <div class="spec-label">Spacing Scale</div>
-                <div style="display: flex; gap: 0.75rem; align-items: end; margin: 1.25rem 0; flex-wrap: wrap;">
+            <h2 class="section-title"><i class="fas fa-tags"></i> Badges & Tags</h2>
+            <div class="glass-card" style="text-align: left;">
+                
+                <span class="spec-label">Header Highlight Badge (.header-badge / .count-badge)</span>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.8rem;">Used strictly under main page <code>h2</code> headers to highlight key metrics, statuses, or available item counts.</p>
+                <div style="margin-bottom: 2rem;">
+                    <span class="header-badge"><i class="fas fa-check-circle"></i> 10 APIs Available</span>
+                </div>
+
+                <span class="spec-label">HTTP Method Badges (.method-badge)</span>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.8rem;">Used to tag API endpoint HTTP methods for quick visual identification.</p>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                    <span class="method-badge get">GET</span>
+                    <span class="method-badge post">POST</span>
+                </div>
+
+                <span class="spec-label">Status Badges (.status-badge)</span>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.8rem;">Used to display the resulting status of operations or API executions.</p>
+                <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                    <span class="status-badge idle"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> Ready state</span>
+                    <span class="status-badge success"><i class="fas fa-check-circle" style="font-size:0.65rem;"></i> 200 OK</span>
+                    <span class="status-badge error"><i class="fas fa-exclamation-circle" style="font-size:0.65rem;"></i> 404 Error</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. INTERACTIVE CONTROLS -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-sliders-h"></i> Interactive Controls & Buttons</h2>
+            <div class="grid">
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Action Buttons</span>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Primary buttons use a subtle gradient and inner shadows. Ghost buttons inherit the default glassmorphism properties to blend seamlessly.</p>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button class="btn btn-primary"><i class="fas fa-rocket"></i> Primary Action</button>
+                        <button class="btn btn-ghost"><i class="fas fa-code"></i> Ghost Button</button>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Form Inputs</span>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Inputs utilize <span class="demo-inline-code">var(--surface)</span> for background and highlight the border with <span class="demo-inline-code">var(--accent)</span> when focused by the user.</p>
+                    
+                    <div class="form-field">
+                        <label for="demo-input">Standard Text Input</label>
+                        <input type="text" id="demo-input" placeholder="Enter parameter value...">
+                    </div>
+                    
+                    <div class="form-field" style="margin-top: 1.2rem;">
+                        <label>Custom Dropdown Select</label>
+                        <div class="custom-select-wrapper" id="demo-select">
+                            <div class="custom-select-trigger">JSON Format</div>
+                            <div class="custom-select-dropdown">
+                                <div class="custom-select-option">JSON Format</div>
+                                <div class="custom-select-option">Raw Text</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-field" style="margin-top: 1.2rem;">
+                        <label class="checkbox-row">
+                            <input type="checkbox" checked>
+                            <span class="custom-checkbox"><i class="fas fa-check"></i></span>
+                            Enable metadata flag
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. INLINE ELEMENTS & LINKS -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-link"></i> Inline Elements & Links</h2>
+            <div class="glass-card" style="text-align: left;">
+                <p style="color: var(--text-secondary); line-height: 1.8;">
+                    When writing documentation, hyperlinks should be styled using the global link variables. 
+                    Hovering over <a href="#" class="demo-link">this demo link</a> reveals a subtle glowing bottom border and text shadow. 
+                    Additionally, inline code such as <span class="demo-inline-code">api_key</span> or <span class="demo-inline-code">const x = 10;</span> 
+                    should utilize a subtle semi-transparent background with the monospace font to stand out from regular text.
+                </p>
+            </div>
+        </section>
+
+        <!-- 10. CODE DISPLAY -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-laptop-code"></i> Code Display & Syntax Highlighting</h2>
+            
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                Standardized code blocks feature automatic syntax highlighting via highlight.js, dynamic language icons, and functional copy-to-clipboard buttons that accurately decode HTML entities.
+            </p>
+
+            <!-- Python Example Block -->
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span class="code-block-lang"><i class="fab fa-python"></i> Python</span>
+                    <!-- data-code handles raw string copying -->
+                    <button class="code-copy-btn" data-code="import requests&#10;&#10;url = &#34;https://miklium.vercel.app/api/python-sandbox&#34;&#10;res = requests.post(url, json={&#34;query&#34;: &#34;print(&#39;MIKLIUM&#39;)&#34;})&#10;print(res.json())"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">import requests
+
+url = "https://miklium.vercel.app/api/python-sandbox"
+res = requests.post(url, json={"query": "print('MIKLIUM')"})
+print(res.json())</code></pre>
+            </div>
+
+            <!-- JSON Example Block -->
+            <div class="code-block-wrapper" style="margin-top: 2rem;">
+                <div class="code-block-header">
+                    <span class="code-block-lang"><i class="fas fa-code"></i> JSON</span>
+                    <button class="code-copy-btn" data-code="{&#10;  &#34;success&#34;: true,&#10;  &#34;data&#34;: {&#10;    &#34;status&#34;: 200&#10;  }&#10;}"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "status": 200
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- 11. FLOATING UI (NAV, TOAST & SCROLL) -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-clone"></i> Floating UI & Overlays</h2>
+            
+            <!-- Explanation of Main Nav -->
+            <div class="glass-card" style="text-align: left; margin-bottom: 1.25rem;">
+                <span class="spec-label">Global Navigation Bar (&lt;nav&gt;)</span>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.6;">
+                    The main navigation bar is a fixed element pinned to the top of the viewport. It uses heavy glassmorphism (<code>blur: 50px</code>, <code>saturate: 180%</code>). On mobile devices, the desktop links are hidden, and a hamburger icon triggers a vanilla JS script that expands the container to reveal the mobile link blocks. Look at the top of this page to see it in action!
+                </p>
+            </div>
+
+            <div class="grid">
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Toast Notifications (.toast)</span>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.6;">
+                        A non-intrusive notification pill that appears fixed at the bottom center of the screen to provide temporary feedback (e.g., when a user clicks "Copy"). It automatically fades out after a set timeout. It is positioned slightly above the scroll button to prevent overlap. Try copying something to see what it looks like.
+                    </p>
+                </div>
+                <div class="glass-card" style="text-align: left;">
+                    <span class="spec-label">Scroll To Top Button (#scrollTop)</span>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.6;">
+                        A circular glassmorphic button that slides up from the bottom center of the screen once the user scrolls down past a predefined threshold (e.g. <code>300px</code>). Clicking it triggers smooth scrolling back to the top of the document. It’s intended for overly long web pages, like this one.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12. SPACING SYSTEM -->
+        <section>
+            <h2 class="section-title"><i class="fas fa-arrows-alt"></i> Spacing Scale</h2>
+            <div class="glass-card" style="text-align: left;">
+                <span class="spec-label">4px Baseline Grid</span>
+                <div style="display: flex; gap: 0.75rem; align-items: end; margin: 1rem 0; flex-wrap: wrap;">
                     <div class="spacing-block" style="width: 16px; height: 16px;">4</div>
                     <div class="spacing-block" style="width: 24px; height: 24px;">8</div>
                     <div class="spacing-block" style="width: 40px; height: 40px;">16</div>
                     <div class="spacing-block" style="width: 56px; height: 56px;">24</div>
                     <div class="spacing-block" style="width: 80px; height: 56px;">32</div>
                     <div class="spacing-block" style="width: 112px; height: 56px;">48</div>
-                    <div class="spacing-block" style="width: 144px; height: 56px;">64</div>
                 </div>
-                <p>The spacing scale follows a <span class="token">4px</span> base unit. Most common values:</p>
-                <p><span class="token">0.5rem</span> (8px) — Tight gaps &nbsp;|&nbsp; <span class="token">1rem</span> (16px) — Standard &nbsp;|&nbsp; <span class="token">1.5rem</span> (24px) — Section padding &nbsp;|&nbsp; <span class="token">4rem</span> (64px) — Section margins</p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    Margins, padding, and gaps universally scale by 4px or 8px blocks ensuring consistent vertical and horizontal rhythm.
+                </p>
             </div>
         </section>
 
-        <div class="divider"></div>
+    </main>
 
-        <section>
-            <h2><i class="fas fa-bolt fa-fw"></i> Motion & Transitions</h2>
-            <div class="grid">
-                <div class="card">
-                    <div class="spec-label">Easing Curve</div>
-                    <h3>Smooth</h3>
-                    <p style="margin-top: 0.5rem;"><span class="token">cubic-bezier(0.4, 0, 0.2, 1)</span></p>
-                    <p>Used on all interactive transitions — hover states, card lifts, button presses, and navigation animations.</p>
-                </div>
-                <div class="card">
-                    <div class="spec-label">Duration</div>
-                    <h3>Timing</h3>
-                    <p style="margin-top: 0.5rem;">Hover effects: <span class="token">0.3s – 0.4s</span></p>
-                    <p>Entry animations: <span class="token">0.7s – 0.9s</span></p>
-                    <p>Page transitions: <span class="token">0.45s</span></p>
-                </div>
-            </div>
-            <div class="card" style="margin-top: 1.25rem;">
-                <div class="spec-label">Entrance Animation</div>
-                <p style="margin-top: 0.5rem;">All content sections use a staggered <span class="token">fadeInUp</span> animation with <span class="token">translateY(24px)</span> offset. Each subsequent section is delayed by <span class="token">0.1s</span> for a cascading reveal effect.</p>
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <section>
-            <h2><i class="fas fa-ruler-combined fa-fw"></i> Layout</h2>
-            <div class="grid">
-                <div class="card">
-                    <div class="spec-label">Content Width</div>
-                    <p>Max container: <span class="token">960px</span></p>
-                    <p>Navigation bar: <span class="token">min(92%, 820px)</span></p>
-                    <p>Body padding: <span class="token">2rem</span></p>
-                </div>
-                <div class="card">
-                    <div class="spec-label">Navigation</div>
-                    <p>Height: <span class="token">56px</span></p>
-                    <p>Position: <span class="token">fixed, top: 12px</span></p>
-                    <p>Style: Floating glassmorphic pill</p>
-                </div>
-            </div>
-        </section>
-
-        <footer style="text-align: center; color: var(--text-tertiary); margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem;">
-            &copy; 2026 MIKLIUM Team. All rights reserved.
-        </footer>
-    </div>
-
-    <div class="toast-msg" id="toast">
+    <!-- =========================================================
+         FLOATING UI ELEMENTS (Toast & Scroll to Top)
+         ========================================================= -->
+    
+    <div class="toast" id="toast">
         <i class="fas fa-check-circle"></i>
-        <span id="toastText">Copied!</span>
+        <span id="toast-text">Copied to clipboard</span>
     </div>
 
+    <button id="scrollTop" class="scroll-top-btn" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- =========================================================
+         SCRIPTS
+         Handles mobile nav, copy logic, dropdowns, and scrolling
+         ========================================================= -->
     <script>
-    (function() {
-        var toast = document.getElementById('toast');
-        var toastText = document.getElementById('toastText');
-        var toastTimer = null;
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // 1. Highlight.js Initialization for Code Blocks
+            hljs.highlightAll();
 
-        function showToast(msg) {
-            toastText.textContent = msg;
-            toast.classList.add('visible');
-            if (toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(function() { toast.classList.remove('visible'); }, 1800);
-        }
+            // 2. Global Mobile Navbar Toggle
+            var page = document.documentElement.getAttribute("data-page");
+            document.querySelectorAll("[data-nav]").forEach(function (a) {
+                if (a.getAttribute("data-nav") === page) a.classList.add("active");
+            });
+            var toggle = document.querySelector(".nav-toggle");
+            var mobileLinks = document.querySelector(".nav-mobile-links");
+            var navEl = document.querySelector("nav");
+            if (toggle && mobileLinks && navEl) {
+                toggle.addEventListener("click", function () {
+                    var open = mobileLinks.classList.toggle("open");
+                    navEl.classList.toggle("nav-expanded", open);
+                    toggle.innerHTML = open ? '<i class="fas fa-xmark"></i>' : '<i class="fas fa-bars"></i>';
+                });
+            }
 
-        // Copy color on swatch click
-        document.querySelectorAll('.color-swatch[data-color]').forEach(function(el) {
-            el.addEventListener('click', function() {
-                var color = el.getAttribute('data-color');
-                navigator.clipboard.writeText(color).then(function() {
-                    showToast('Copied ' + color);
+            // 3. Toast Notification Logic
+            var toastEl = document.getElementById("toast");
+            var toastTextEl = document.getElementById("toast-text");
+            var toastTimeout = null;
+
+            function showToast(message) {
+                toastTextEl.textContent = message;
+                toastEl.classList.add("visible");
+                if (toastTimeout) clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(function() { 
+                    toastEl.classList.remove("visible"); 
+                }, 2200); 
+            }
+
+            // 4. Code Block Copy Logic (Decodes HTML entities properly)
+            document.querySelectorAll(".code-copy-btn").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    var code = btn.getAttribute("data-code");
+                    
+                    // Decode string if it has HTML entities
+                    var decoded = code.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#039;/g, "'");
+                    
+                    navigator.clipboard.writeText(decoded).then(function() {
+                        btn.classList.add("copied");
+                        btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                        showToast("Code copied to clipboard");
+                        
+                        setTimeout(function() {
+                            btn.classList.remove("copied");
+                            btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                        }, 1500);
+                    });
                 });
             });
-        });
 
-        // Copy token on click
-        document.querySelectorAll('.token').forEach(function(el) {
-            el.addEventListener('click', function() {
-                var text = el.textContent;
-                navigator.clipboard.writeText(text).then(function() {
-                    showToast('Copied ' + text);
+            // 5. Token & Swatch Copy Logic
+            document.querySelectorAll(".color-swatch, .token").forEach(function(el) {
+                el.addEventListener("click", function() {
+                    var val = el.getAttribute("data-copy") || el.textContent;
+                    if (val) {
+                        navigator.clipboard.writeText(val).then(function() {
+                            showToast("Copied " + val);
+                        });
+                    }
                 });
             });
+
+            // 6. Custom Select Dropdown Toggle
+            var selectWrapper = document.getElementById("demo-select");
+            if (selectWrapper) {
+                var trigger = selectWrapper.querySelector(".custom-select-trigger");
+                var options = selectWrapper.querySelectorAll(".custom-select-option");
+                
+                trigger.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    selectWrapper.classList.toggle("open");
+                });
+
+                options.forEach(function(opt) {
+                    opt.addEventListener("click", function(e) {
+                        e.stopPropagation();
+                        trigger.textContent = opt.textContent;
+                        selectWrapper.classList.remove("open");
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener("click", function(e) {
+                    if (!selectWrapper.contains(e.target)) {
+                        selectWrapper.classList.remove("open");
+                    }
+                });
+            }
+
+            // 7. Scroll To Top Button Logic
+            var scrollBtn = document.getElementById("scrollTop");
+            if (scrollBtn) {
+                window.addEventListener("scroll", function() {
+                    if (window.scrollY > 300) {
+                        scrollBtn.classList.add("visible");
+                    } else {
+                        scrollBtn.classList.remove("visible");
+                    }
+                });
+
+                scrollBtn.addEventListener("click", function() {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                });
+            }
         });
-    })();
     </script>
 </body>
 </html>

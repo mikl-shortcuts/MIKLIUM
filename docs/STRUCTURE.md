@@ -7,11 +7,16 @@ Architecture, conventions, and templates for the MIKLIUM open-source API platfor
 - [Overview](#overview)
 - [Project Layout](#project-layout)
 - [How Everything Connects](#how-everything-connects)
+- [Frontend Architecture & Rules](#frontend-architecture--rules)
+  - [Design System & CSS Variables](#design-system--css-variables)
+  - [Navigation & Mobile Support](#navigation--mobile-support)
+  - [Additional Information](#additional-information)
 - [API Folder Anatomy](#api-folder-anatomy)
   - [Required Files](#required-files)
   - [Optional Files](#optional-files)
   - [Response Contract](#response-contract)
 - [File Templates](#file-templates)
+  - [Frontend HTML Page Template](#frontend-html-page-template)
   - [Node.js API `index.js`](#nodejs-api-indexjs)
   - [Python API `index.py`](#python-api-indexpy)
   - [Config `config.toml`](#config-configtoml)
@@ -23,6 +28,7 @@ Architecture, conventions, and templates for the MIKLIUM open-source API platfor
   - [Auto-Generated Files](#auto-generated-files)
 - [Conventions & Rules](#conventions--rules)
   - [Naming](#naming)
+  - [Rules for Frontend Development](#rules-for-frontend-development)
   - [Rules for APIs Development](#rules-for-apis-development)
 
 ---
@@ -31,28 +37,15 @@ Architecture, conventions, and templates for the MIKLIUM open-source API platfor
 
 MIKLIUM is a platform of free, keyless serverless APIs. The codebase splits into four parts:
 
-```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '14px'}}}%%
-flowchart LR
-    A("<b>api/</b><br/>Serverless functions"):::api --> V(("Vercel")):::deploy
-    B("<b>webpage/</b><br/>Static website"):::web --> G(("GitHub<br/>Pages")):::deploy
-    C("<b>.github/</b><br/>CI/CD & templates"):::ci --> GA(("GitHub<br/>Actions")):::deploy
-    D("<b>docs/</b><br/>STRUCTURE, SECURITY..."):::docs --> GH(("GitHub<br/>Repo")):::deploy
-
-    classDef api fill:#1a3d2e,stroke:#4ade80,color:#fff,rx:12
-    classDef web fill:#1a2d4d,stroke:#60a5fa,color:#fff,rx:12
-    classDef ci fill:#3d2d1a,stroke:#f59e0b,color:#fff,rx:12
-    classDef docs fill:#2d1a3d,stroke:#a78bfa,color:#fff,rx:12
-    classDef deploy fill:#111,stroke:#888,color:#ccc,rx:50
-```
-
 | Directory | Purpose | Deploys to |
 |-----------|---------|------------|
-| `api/` | Serverless API endpoints | Vercel |
-| `webpage/` | Public website: docs viewer, playground, showcase, etc. | GitHub Pages |
 | `.github/` | Workflows, test scripts, issue templates | GitHub Actions |
+| `api/` | Serverless API endpoints | Vercel |
 | `beta/` | Experimental APIs | — |
-| Root files | README, LICENSE, CONTRIBUTING, etc. | — |
+| `models/` | Standalone AI/ML models | — |
+| `docs` | Documentation for MIKLIUM users and developers | - |
+| `webpage/` | Public website: docs viewer, playground, showcase, etc. | GitHub Pages |
+| Root files | README, LICENSE, etc. | — |
 
 ---
 
@@ -60,23 +53,23 @@ flowchart LR
 
 ```
 MIKLIUM/
+├── .github/
+│   ├── workflows/ ← CI/CD workflow definitions
+│   ├── scripts/ ← scripts for CI/CD workflows
+│   └── ISSUE_TEMPLATE/ ← issue forms
+│
 ├── api/ ← our APIs (Vercel)
 │   ├── your-api-name/ ← one folder per API
 │   │   ├── index.js or .py ← entry point
 │   │   ├── README.md ← documentation
 │   │   ├── config.toml ← configuration  for playground and tests
 │   │   └── ... ← any other files you need
-│   ├── models/
-│   │   └── miklium-lm-nano/ ← standalone ML model project
 │   └── 404.js ← fallback for unknown routes
 │
 ├── beta/api/ ← experimental APIs and tools
-├── webpage/ ← static site (GitHub Pages)
 │
-├── .github/
-│   ├── workflows/ ← CI/CD workflow definitions
-│   ├── scripts/ ← scripts for CI/CD workflows
-│   └── ISSUE_TEMPLATE/ ← issue forms
+├── models/ ← Standalone AI/ML models
+│   └── model-name/ ← one folder per model
 │
 ├── docs/
 │   ├── APIDOCS.md ← documentation for all APIs
@@ -86,7 +79,9 @@ MIKLIUM/
 │   ├── CONTRIBUTING.md ← how to contribute
 │   ├── CODE_OF_CONDUCT.md ← community standards
 │   ├── TODO.md ← roadmap
-│   └── design_guidelines.html ← visual style guide
+│   └── DESIGN_GUIDELINES.html ← visual style guide
+│
+├── webpage/ ← static site (GitHub Pages)
 │
 ├── README.md ← main repository description
 ├── LICENSE.md ← MIT
@@ -145,6 +140,38 @@ flowchart LR
 
 ---
 
+## Frontend Architecture & Rules
+
+The MIKLIUM frontend is a purely static website built with vanilla HTML, CSS, and JS. Consistency across all pages is maintained by strictly adhering to the following rules.
+
+### Design System & CSS Variables
+
+Do **not** use hardcoded HEX colors or inline font families in HTML. Everything must inherit from the global [`webpage/css/style.css`](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/webpage/css/style.css) file. 
+
+* **Colors**: 
+  * Backgrounds: `var(--bg)` (Root background), `var(--surface)` (Glassmorphism containers).
+  * Accents: `var(--accent)` (MIKLIUM Blue), `var(--accent-hover)`.
+  * Text: `var(--text-primary)` (White), `var(--text-secondary)` (Muted gray).
+* **Typography**:
+  * **System Font**: Used by default for all UI elements, headings, and paragraphs.
+  * **Monospace Font**: Use `var(--font-mono)` (JetBrains Mono) for code snippets, JSON outputs, API paths, and badges. Automatically applied to `<pre>` and `<code>`.
+* **Glassmorphism**: Use the `.glass-card` class for main content blocks to automatically apply the standardized blur, borders, and shadows.
+
+### Navigation & Mobile Support
+
+Every `.html` page across the repository must be fully responsive and include standard navigation:
+
+1. **Global Navbar**: Every page must include the exact `<nav>` block containing both the `.nav-top` (desktop) and `.nav-mobile-links` (mobile) containers.
+2. **Mobile Toggle Script**: At the bottom of every `<body>`, you must include the small vanilla JavaScript snippet that handles the hamburger menu (`.nav-toggle`) open/close logic.
+3. **Active Page Highlight**: The `<html>` tag must include `data-page="page-id"` so the JS script can automatically highlight the correct link in the navbar.
+4. **Layout**: Always wrap main content in semantic tags like `<main>` and use standard spacing variables (e.g., `calc(var(--nav-height) + 48px)` for top padding) to avoid navbar overlap.
+
+### Additional Information
+
+For more information and ready-made elements for our websites, you can visit the [Design Guidelines site](https://miklium-team.github.io/MIKLIUM/docs/DESIGN_GUIDELINES.html) and review [its code](https://github.com/MIKLIUM-Team/MIKLIUM/blob/main/docs/DESIGN_GUIDELINES.html) or see practical usage on other pages of [our website](https://miklium-team.github.io/MIKLIUM/webpage/index.html).
+
+---
+
 ## API Folder Anatomy
 
 ### Required Files
@@ -183,6 +210,107 @@ Every API must return JSON with a `success` boolean:
 > Every response must include CORS headers (`Access-Control-Allow-Origin: *`), and every handler must respond to `OPTIONS` preflight requests. All templates below include this.
 
 ## File Templates
+
+### Frontend HTML Page Template
+
+```html
+<!DOCTYPE html>
+<html lang="en" data-page="your-page-id">
+<head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Your Page Title and Description: -->
+  <title>Your Page - MIKLIUM</title>
+  <meta name="description" content="Description of your page.">
+  <meta property="og:title" content="Your Page - MIKLIUM">
+  <meta property="og:description" content="Description of your page.">
+  
+  <!-- REQUIRED: Site Configuration -->
+  <meta property="og:image" content="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Preview.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0155A1">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/MIKLIUM-Team/MIKLIUM/refs/heads/main/webpage/assets/Logo_Original.png">
+    
+  <!-- External Dependencies if needed: -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer"> -->
+    
+  <!-- Core MIKLIUM Design System -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+      padding-top: calc(var(--nav-height) + 48px);
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- REQUIRED: Global Navigation -->
+  <nav>
+    <div class="nav-top">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/Logo.svg" alt="" class="nav-logo">
+        MIKLIUM
+      </a>
+      <button class="nav-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      <ul class="nav-links">
+        <li><a href="index.html" data-nav="home">Home</a></li>
+        <li><a href="projects.html" data-nav="projects">Projects</a></li>
+        <li><a href="APIDOCS.html" data-nav="apidocs">API Docs</a></li>
+        <li><a href="playground.html" data-nav="playground">Playground</a></li>
+        <li><a href="support.html" data-nav="support">Support</a></li>
+      </ul>
+    </div>
+    <div class="nav-mobile-links">
+      <a href="index.html" data-nav="home"><i class="fas fa-house"></i> Home</a>
+      <a href="projects.html" data-nav="projects"><i class="fas fa-cube"></i> Featured Projects</a>
+      <a href="APIDOCS.html" data-nav="apidocs"><i class="fas fa-book"></i> API Docs</a>
+      <a href="playground.html" data-nav="playground"><i class="fas fa-flask"></i> API Playground</a>
+      <a href="support.html" data-nav="support"><i class="fas fa-headset"></i> Support</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <div class="page-header">
+      <h2>Page Title</h2>
+      <p>Page subtitle or description.</p>
+    </div>
+    
+    <!-- Use standard components -->
+    <div class="glass-card">
+      <p>Your content here...</p>
+    </div>
+  </main>
+
+  <!-- REQUIRED: Mobile Menu Toggle Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var page = document.documentElement.getAttribute("data-page");
+      document.querySelectorAll("[data-nav]").forEach(function (a) {
+        if (a.getAttribute("data-nav") === page) a.classList.add("active");
+      });
+      var toggle = document.querySelector(".nav-toggle");
+      var mobileLinks = document.querySelector(".nav-mobile-links");
+      var navEl = document.querySelector("nav");
+      if (!toggle || !mobileLinks || !navEl) return;
+      toggle.addEventListener("click", function () {
+        var open = mobileLinks.classList.toggle("open");
+        navEl.classList.toggle("nav-expanded", open);
+        toggle.innerHTML = open ? '<i class="fas fa-xmark"></i>' : '<i class="fas fa-bars"></i>';
+      });
+    });
+  </script>
+</body>
+</html>
+```
 
 ### Node.js API `index.js`
 
@@ -796,6 +924,13 @@ CORS headers (`Access-Control-Allow-Origin: *`) are applied to all `/api/*` resp
 | Entry point | `index.js`, `index.py`, or other Vercel-supported runtime | — |
 | JSON response keys | `camelCase` | `maxResults`, `includeInfo` |
 | Config & docs | Exact names: `config.toml`, `README.md` | — |
+
+### Rules for Frontend Development
+
+| Rule | Reason |
+|------|--------|
+| **Strict HTML Templates** | Ensures site-wide design consistency and mobile functionality |
+| **Use CSS Variables** | Simplifies global theming, prevents messy inline code |
 
 ### Rules for APIs Development
 
