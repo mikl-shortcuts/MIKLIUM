@@ -1,335 +1,221 @@
 import json
-import sys
-import subprocess
-import tempfile
 import os
-import re
-import time
 import ast
-from http.server import BaseHTTPRequestHandler
+import urllib.request
+from urllib.error import HTTPError, URLError
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+VERCEL_ENV = os.environ.get("VERCEL_ENV", "preview")
+
+PROD_URL = "https://miklium.onrender.com"
+PREVIEW_URL = "https://miklium-preview.onrender.com"
+
+if VERCEL_ENV == "production":
+    SANDBOX_URL = PROD_URL
+else:
+    SANDBOX_URL = PREVIEW_URL
 
 MAX_CODE_LENGTH = 15_000
-MAX_STDOUT = 10_000
-MAX_STDERR = 7_000
-MAX_TIMEOUT = 40
+MAX_STDIN_SIZE = 50_000
 DEFAULT_TIMEOUT = 20
-MAX_MEMORY_MB = 64
-MAX_RECURSION = 200
+MAX_TIMEOUT = 40
 
-BLOCKED_MODULES = [
-    "os", "subprocess", "shutil", "pathlib", "glob", "tempfile",
-    "socket", "urllib", "requests", "httpx", "http", "aiohttp",
-    "ftplib", "smtplib", "imaplib", "poplib",
-    "multiprocessing", "threading", "signal", "asyncio",
-    "ctypes", "cffi", "mmap",
-    "pickle", "shelve", "marshal",
-    "importlib", "code", "codeop",
-    "webbrowser", "antigravity", "turtle",
-    "gc", "resource", "atexit", "io", "sys",
-    "posix", "nt", "posixpath", "ntpath", "genericpath",
-    "_io", "_posixsubprocess", "_signal",
-    "pwd", "grp", "fcntl", "termios", "tty", "pty",
-    "_frozen_importlib", "_frozen_importlib_external",
-    "inspect", "pkgutil", "modulefinder", "ast", "linecache",
-]
+def format_json(data):
+    return json.dumps(data, indent=2, separators=(',', ' : '), ensure_ascii=False).encode('utf-8')
 
-BLOCKED_BUILTINS = [
-    "open", "exec", "eval", "compile", "breakpoint",
-    "exit", "quit", "help", "input",
-    "memoryview", "property", "type", "object",
-]
+def make_response(start_response, status, body_dict):
+    body_bytes = format_json(body_dict)
+    start_response(status, [
+        ('Content-Type', 'application/json; charset=utf-8'),
+        ('Access-Control-Allow-Origin', '*'),
+        ('X-Content-Type-Options', 'nosniff'),
+    ])
+    return [body_bytes]
 
-BLOCKED_DUNDERS = [
-    "__subclasses__", "__globals__", "__builtins__",
-    "__code__", "__bases__", "__mro__",
-    "__dict__", "__class__", "__module__",
-    "__defaults__", "__kwdefaults__", "__closure__",
-    "__self__", "__func__", "__getattribute__",
-    "__get__", "__set__", "__delete__",
-    "__init_subclass__", "__subclasshook__",
-]
-
-BLOCKED_SYSMODULES_KEYS = {
-    "posix", "nt", "_io", "_posixsubprocess", "_signal",
-    "pwd", "grp", "fcntl", "posixpath", "ntpath", "genericpath",
-    "_frozen_importlib", "_frozen_importlib_external",
-    "zipimport", "_imp",
-}
-
-TMP_FILE_RE = re.compile(r'File "/tmp/[^"]+", ')
-LINE_RE = re.compile(r'(?<=line )\d+')
-
-WRAPPER = '''
-import sys, builtins
-
-def __sandbox_init():
+def validate_timeout(value, default=DEFAULT_TIMEOUT, max_val=MAX_TIMEOUT):
     try:
-        import resource
-        _mem = {max_memory} * 1024 * 1024
-        for limit in [resource.RLIMIT_AS, resource.RLIMIT_FSIZE, resource.RLIMIT_NPROC]:
-            try:
-                val = _mem if limit == resource.RLIMIT_AS else 0
-                resource.setrlimit(limit, (val, val))
-            except Exception as e:
-                print(f"Warning: setrlimit {{limit}} failed: {{e}}", file=sys.stderr)
-    except Exception:
-        pass
-
-    _blocked = set({blocked_set})
-    _blocked_sys = set({blocked_sysmodules})
-    _blocked_attrs = frozenset({blocked_dunders})
-
-    for k in list(sys.modules.keys()):
-        if k in _blocked_sys or k.split(".")[0] in _blocked:
-            del sys.modules[k]
-
-    _orig_import = __import__
-    def _safe_import(name, *args, **kwargs):
-        if name.split(".")[0] in _blocked or name in _blocked_sys:
-            raise ImportError(f"Access to '{{name}}' is blocked")
-        return _orig_import(name, *args, **kwargs)
-    builtins.__import__ = _safe_import
-
-    _orig_setattr = setattr
-    _orig_delattr = delattr
-    _orig_getattr = getattr
-
-    def _safe_getattr(obj, name, *args):
-        if isinstance(name, str) and (name in _blocked_attrs or (name.startswith("__") and name.endswith("__"))):
-             raise AttributeError(f"Access to '{{name}}' is blocked")
-        return _orig_getattr(obj, name, *args)
-    builtins.getattr = _safe_getattr
-
-    def _safe_setattr(obj, name, value):
-        if isinstance(name, str) and (name in _blocked_attrs or (name.startswith("__") and name.endswith("__"))):
-            raise AttributeError(f"Setting '{{name}}' is blocked")
-        _orig_setattr(obj, name, value)
-    builtins.setattr = _safe_setattr
-
-    def _safe_delattr(obj, name):
-        if isinstance(name, str) and (name in _blocked_attrs or (name.startswith("__") and name.endswith("__"))):
-            raise AttributeError(f"Deleting '{{name}}' is blocked")
-        _orig_delattr(obj, name)
-    builtins.delattr = _safe_delattr
-
-    for b in {blocked_builtins}:
-        _orig_setattr(builtins, b, None)
-    
-    _orig_setattr(builtins, "vars", None)
-    sys.setrecursionlimit({max_recursion})
-
-__sandbox_init()
-del __sandbox_init
-
-{code}
-'''
-
-WRAPPER_PREFIX_LINES = WRAPPER.split("{code}")[0].format(
-    blocked_set=repr(set(BLOCKED_MODULES)),
-    blocked_sysmodules=repr(BLOCKED_SYSMODULES_KEYS),
-    blocked_dunders=repr(set(BLOCKED_DUNDERS)),
-    blocked_builtins=repr(BLOCKED_BUILTINS),
-    max_memory=MAX_MEMORY_MB,
-    max_recursion=MAX_RECURSION,
-).count("\n")
-
+        timeout = float(value) if isinstance(value, (int, float)) else default
+        return min(max(0.5, timeout), max_val)
+    except (ValueError, TypeError):
+        return default
 
 def check_ast(code):
     try:
-        tree = ast.parse(code)
+        ast.parse(code)
+        return []
     except SyntaxError as e:
         return [f"SyntaxError: {e}"]
 
-    blocked = []
-    for node in ast.walk(tree):
-        # Imports
-        if isinstance(node, ast.Import):
-            for n in node.names:
-                base = n.name.split('.')[0]
-                if base in BLOCKED_MODULES:
-                    blocked.append(f"module '{base}'")
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                base = node.module.split('.')[0]
-                if base in BLOCKED_MODULES:
-                    blocked.append(f"module '{base}'")
-            for n in node.names:
-                if n.name in BLOCKED_BUILTINS or n.name in BLOCKED_DUNDERS:
-                    blocked.append(f"restricted name '{n.name}'")
-
-        # Attribute access (F-01, F-02 bypass)
-        elif isinstance(node, ast.Attribute):
-            if node.attr in BLOCKED_DUNDERS or (node.attr.startswith("__") and node.attr.endswith("__")):
-                 blocked.append(f"attribute access '{node.attr}'")
-
-        # Name access (F-05 bypass via names)
-        elif isinstance(node, ast.Name):
-            if node.id in BLOCKED_BUILTINS or node.id in BLOCKED_DUNDERS:
-                blocked.append(f"restricted name '{node.id}'")
-            if node.id in ["getattr", "setattr", "delattr", "vars"]:
-                blocked.append(f"dynamic attribute helper '{node.id}'")
+def process_backend_response(resp_bytes):
+    try:
+        data = json.loads(resp_bytes.decode('utf-8'))
         
-        # String literals (F-05 check) - simplified to prevent overkill but catch obvious ones
-        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
-            val = node.value.lower()
-            # Only block strings that EXACTLY match critical blocked items to avoid false positives
-            # but allow them if they are common words. 
-            # Real defense is in WRAPPER and Name/Attribute checks.
-            for b_dunder in BLOCKED_DUNDERS:
-                if b_dunder in val:
-                    blocked.append(f"suspicious string literal containing '{b_dunder}'")
+        is_success = data.get("success", False)
+        exit_code = data.get("exit_code", 0)
+        stdout = data.get("stdout", "")
+        stderr = data.get("stderr", "")
+        time_ms = data.get("time_ms", 0)
+        error_msg = data.get("error", "")
 
-    return sorted(list(set(blocked)))
-
-
-def clean_stderr(text):
-    text = TMP_FILE_RE.sub("", text)
-
-    def adjust_line(m):
-        n = int(m.group(0))
-        adjusted = n - WRAPPER_PREFIX_LINES
-        return str(max(adjusted, 1))
-
-    text = LINE_RE.sub(adjust_line, text)
-    return text
-
-
-class handler(BaseHTTPRequestHandler):
-
-    def do_GET(self):
-        print("GET request rejected")
-        return self._json(405, {"success": False, "error": "Only POST method is supported"})
-
-    def do_OPTIONS(self):
-        self.send_response(204)
-        self._cors()
-        self.end_headers()
-
-    def do_POST(self):
-        length = int(self.headers.get("Content-Length", 0))
-        if not length:
-            print("Empty request body")
-            return self._json(400, {"success": False, "error": "Empty body"})
-
-        try:
-            body = json.loads(self.rfile.read(length))
-        except json.JSONDecodeError as e:
-            print(f"JSON parse failed: {e}")
-            return self._json(400, {"success": False, "error": "Invalid JSON"})
-
-        code = body.get("code", "")
-        stdin_list = body.get("stdin", [])
-        timeout = min(max(0.5, body.get("timeout", DEFAULT_TIMEOUT)), MAX_TIMEOUT)
-
-        if not code or not isinstance(code, str):
-            print("Missing or invalid code field")
-            return self._json(400, {"success": False, "error": "Missing 'code'"})
-
-        if len(code) > MAX_CODE_LENGTH:
-            print(f"Code too long: {len(code)} chars")
-            return self._json(400, {"success": False, "error": "Code too long"})
-
-        if not isinstance(stdin_list, list):
-            print("Invalid stdin type")
-            return self._json(400, {"success": False, "error": "'stdin' must be an array"})
-
-        stdin_data = "\n".join(str(item) for item in stdin_list)
-
-        blocked = check_ast(code)
-        if blocked:
-            names = ", ".join(blocked)
-            print(f"Blocked modules detected: {names}")
-            return self._json(403, {
-                "success": False,
-                "error": f"Blocked: {names} — not allowed in sandbox",
-            })
-
-        script = WRAPPER.format(
-            code=code,
-            blocked_set=repr(set(BLOCKED_MODULES)),
-            blocked_sysmodules=repr(BLOCKED_SYSMODULES_KEYS),
-            blocked_dunders=repr(set(BLOCKED_DUNDERS)),
-            blocked_builtins=repr(BLOCKED_BUILTINS),
-            max_memory=MAX_MEMORY_MB,
-            max_recursion=MAX_RECURSION,
-        )
-        start = time.perf_counter()
-
-        tmp = None
-        try:
-            fd, tmp = tempfile.mkstemp(suffix=".py", dir="/tmp")
-            with os.fdopen(fd, "w") as f:
-                f.write(script)
-            os.chmod(tmp, 0o600)
-
-            result = subprocess.run(
-                [sys.executable, "-u", tmp],
-                input=stdin_data,
-                capture_output=True,
-                text=True,
-                timeout=timeout,
-                cwd="/tmp",
-                env={"PATH": "/usr/bin:/bin", "HOME": "/tmp", "PYTHONDONTWRITEBYTECODE": "1"},
-            )
-            ms = int(f"{(time.perf_counter() - start) * 1000:.2f}".split(".")[0])
-
-            stdout = result.stdout[:MAX_STDOUT].rstrip("\n")
-            stderr_clean = clean_stderr(result.stderr[:MAX_STDERR]).rstrip("\n") if result.stderr else None
-
-            if result.returncode != 0:
-                error_msg = "Runtime error"
-                if stderr_clean:
-                    error_msg += ": " + stderr_clean.strip()
-                print(f"Runtime error, exit code {result.returncode}")
-                return self._json(400, {
-                    "success": False,
-                    "error": error_msg,
-                    "stdout": stdout,
-                    "exit_code": result.returncode,
-                    "time_ms": ms,
-                })
-
-            return self._json(200, {
+        if is_success and exit_code == 0:
+            return {
                 "success": True,
+                "exit_code": 0,
                 "stdout": stdout,
-                "exit_code": result.returncode,
-                "time_ms": ms,
-            })
-        except subprocess.TimeoutExpired:
-            ms = int(f"{(time.perf_counter() - start) * 1000:.2f}".split(".")[0])
-            print(f"Execution timed out after {timeout}s")
-            return self._json(408, {
+                "time_ms": time_ms
+            }
+        elif exit_code != 0 or stderr or stdout:
+            if not error_msg and stderr:
+                error_msg = f"Runtime error: {stderr}"
+            elif not error_msg:
+                error_msg = f"Runtime error: Exit code {exit_code}"
+            
+            return {
                 "success": False,
-                "error": f"Timed out after {timeout}s",
-                "stdout": "",
-                "exit_code": -1,
-                "time_ms": ms,
-            })
-        except Exception as e:
-            print(f"Execution error: {type(e).__name__}: {e}")
-            return self._json(500, {
+                "stdout": stdout,
+                "exit_code": exit_code,
+                "time_ms": time_ms,
+                "error": error_msg
+            }
+        else:
+            return {
                 "success": False,
-                "error": "Internal server error",
-            })
-        finally:
-            if tmp:
-                try:
-                    os.unlink(tmp)
-                except Exception as e:
-                    print(f"Temp file cleanup failed: {e}")
+                "error": error_msg or "Execution failed"
+            }
+    except Exception:
+        fallback_text = resp_bytes.decode('utf-8', errors='ignore').strip()
+        return {
+            "success": False,
+            "error": fallback_text or "Invalid response from execution sandbox"
+        }
 
-    def _json(self, status, data):
-        body = json.dumps(data, ensure_ascii=False, default=str).encode()
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self._cors()
-        self.end_headers()
-        self.wfile.write(body)
+def app(environ, start_response):
+    request_method = environ.get('REQUEST_METHOD', '')
+    
+    if request_method == 'OPTIONS':
+        start_response('204 No Content', [
+            ('Access-Control-Allow-Origin', '*'),
+            ('Access-Control-Allow-Methods', 'POST, OPTIONS'),
+            ('Access-Control-Allow-Headers', 'Content-Type'),
+        ])
+        return [b'']
 
-    def _cors(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+    if request_method != 'POST':
+        logger.warning(f"Rejected {request_method} request")
+        return make_response(start_response, '405 Method Not Allowed', {
+            "success": False,
+            "error": "Only POST method is supported"
+        })
 
-    def log_message(self, *a):
-        pass
+    content_type = environ.get('CONTENT_TYPE', '')
+    if 'application/json' not in content_type:
+        return make_response(start_response, '415 Unsupported Media Type', {
+            "success": False,
+            "error": "Content-Type must be application/json"
+        })
+
+    try:
+        request_body_size = int(environ.get('CONTENT_LENGTH', 0))
+    except ValueError:
+        request_body_size = 0
+
+    if request_body_size == 0 or request_body_size > 100_000:
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": "Empty or too large body"
+        })
+
+    try:
+        request_body = environ['wsgi.input'].read(request_body_size)
+        body = json.loads(request_body.decode('utf-8'))
+    except Exception as e:
+        logger.error(f"JSON parse failed: {e}")
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": "Invalid JSON"
+        })
+
+    code = body.get("code", "")
+    stdin_list = body.get("stdin", [])
+    timeout = validate_timeout(body.get("timeout"))
+
+    if not code or not isinstance(code, str):
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": "Missing 'code'"
+        })
+
+    if len(code) > MAX_CODE_LENGTH:
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": f"Code too long ({len(code)} > {MAX_CODE_LENGTH})"
+        })
+
+    if not isinstance(stdin_list, list):
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": "'stdin' must be an array"
+        })
+
+    stdin_data = "\n".join(str(item) for item in stdin_list)
+    if len(stdin_data) > MAX_STDIN_SIZE:
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": f"stdin data too large ({len(stdin_data)} > {MAX_STDIN_SIZE})"
+        })
+
+    blocked = check_ast(code)
+    if blocked:
+        return make_response(start_response, '400 Bad Request', {
+            "success": False,
+            "error": blocked[0]
+        })
+
+    secret_key = os.environ.get("SANDBOX_API_KEY")
+    if not secret_key:
+        logger.error("SANDBOX_API_KEY not configured")
+        return make_response(start_response, '500 Internal Server Error', {
+            "success": False,
+            "error": "Backend credentials misconfigured"
+        })
+
+    req_data = json.dumps({
+        "code": code,
+        "stdin": stdin_list,
+        "timeout": timeout
+    }).encode('utf-8')
+
+    req = urllib.request.Request(
+        SANDBOX_URL,
+        data=req_data,
+        headers={
+            "Content-Type": "application/json",
+            "X-Sandbox-Token": secret_key
+        },
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=timeout + 15) as response:
+            resp_data = response.read()
+            standardized_body = process_backend_response(resp_data)
+            return make_response(start_response, f'{response.status} OK', standardized_body)
+    except HTTPError as e:
+        resp_data = e.read()
+        standardized_body = process_backend_response(resp_data)
+        return make_response(start_response, f'{e.code} Error', standardized_body)
+    except URLError as e:
+        logger.error(f"Failed to connect to backend: {e}")
+        return make_response(start_response, '503 Service Unavailable', {
+            "success": False,
+            "error": "Backend service unavailable"
+        })
+    except Exception as e:
+        logger.exception(f"Execution error: {type(e).__name__}")
+        return make_response(start_response, '500 Internal Server Error', {
+            "success": False,
+            "error": "Internal server error"
+        })
