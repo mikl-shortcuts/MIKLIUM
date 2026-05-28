@@ -795,7 +795,7 @@ Unfortunately, the Python Sandbox is not designed to run very complex or potenti
 
 ### Code Limitations:
 
-* Maximum number of characters of code: `15000`
+* Maximum size of standard input of code: `50000` characters
 * Blocked modules that cannot be imported:
   ```python
   "os", "sys", "subprocess", "shutil", "pathlib", "glob", "tempfile" # File system
@@ -812,7 +812,7 @@ Unfortunately, the Python Sandbox is not designed to run very complex or potenti
   "_frozen_importlib", "_frozen_importlib_external", "zipimport", "_imp" # Import system internals
   ```
 * Third-party modules cannot be imported (standard library modules work fine: e.g. `json`, `math`, `random`, `datetime`, `itertools`, `collections`, `re`, and others)
-* Blocked build-in functions:
+* Blocked built-in functions:
   ```python
   open() # File read or write
   exec() # Execute arbitrary code
@@ -844,8 +844,8 @@ Unfortunately, the Python Sandbox is not designed to run very complex or potenti
 * Maximum Python program output: `10 000` characters
 * Maximum Python code error message: `7 000` characters
 * Maximum timeout: `40` seconds (can be configured in Request Body)
-* Maximum of memory usage (RAM): `64` MB
-* Maximum of recursion (then function calls itself) depth: `200` levels. Example of recursion:
+* Maximum memory usage (RAM): `64` MB
+* Maximum recursion (then function calls itself) depth: `200` levels. Example of recursion:
   ```python
   # Factorial calculator
 
