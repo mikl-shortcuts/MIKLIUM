@@ -1,12 +1,13 @@
 name: "API Tests"
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
   schedule:
     - cron: '0 6 */3 * *'
+  workflow_call:
+    inputs:
+      deploy_url:
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -33,9 +34,9 @@ jobs:
         id: detect
         if: github.event_name != 'schedule' && steps.filter.outputs.apis == 'true'
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then
             BASE=${{ github.event.pull_request.base.sha }}
-            HEAD=${{ github.sha }}
+            HEAD=${{ github.event.pull_request.head.sha }}
           else
             BASE=${{ github.event.before }}
             HEAD=${{ github.sha }}
@@ -48,73 +49,17 @@ jobs:
 
           echo "changed_projects=$CHANGED" >> "$GITHUB_OUTPUT"
 
-      - name: Wait for Vercel deployment via GitHub Deployments API
+      - name: Resolve deployment URL
         id: resolve
         if: github.event_name == 'schedule' || steps.filter.outputs.apis == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "deploy_url=https://miklium.vercel.app" >> "$GITHUB_OUTPUT"
-            echo "Schedule run, using production URL"
-            exit 0
+          elif [ -n "${{ inputs.deploy_url }}" ]; then
+            echo "deploy_url=${{ inputs.deploy_url }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_url=https://miklium.vercel.app" >> "$GITHUB_OUTPUT"
           fi
-
-          COMMIT_SHA="${{ github.event.pull_request.head.sha || github.sha }}"
-          echo "Waiting for deployment of commit $COMMIT_SHA..."
-
-          MAX_ATTEMPTS=10
-          SLEEP_INTERVAL=10
-
-          echo "::group::Polling Deployments API"
-          for i in $(seq 1 $MAX_ATTEMPTS); do
-            echo "Attempt $i/$MAX_ATTEMPTS..."
-
-            DEPLOYMENTS=$(gh api \
-              "repos/${{ github.repository }}/deployments?sha=$COMMIT_SHA&per_page=10" \
-              --jq '.[].id' 2>/dev/null || echo "")
-
-            if [ -z "$DEPLOYMENTS" ]; then
-              echo "  No deployments found yet"
-              sleep $SLEEP_INTERVAL
-              continue
-            fi
-
-            for DEPLOY_ID in $DEPLOYMENTS; do
-              STATUS_DATA=$(gh api \
-                "repos/${{ github.repository }}/deployments/$DEPLOY_ID/statuses?per_page=1" \
-                2>/dev/null || echo "[]")
-
-              STATE=$(echo "$STATUS_DATA" | jq -r '.[0].state // empty')
-              ENV_URL=$(echo "$STATUS_DATA" | jq -r '.[0].environment_url // empty')
-              TARGET_URL=$(echo "$STATUS_DATA" | jq -r '.[0].target_url // empty')
-
-              echo "  Deployment $DEPLOY_ID: state=$STATE"
-
-              if [ "$STATE" == "success" ]; then
-                DEPLOY_URL="${ENV_URL:-$TARGET_URL}"
-
-                if [ -n "$DEPLOY_URL" ] && [ "$DEPLOY_URL" != "null" ]; then
-                  echo "::endgroup::"
-                  echo "Deployment ready: $DEPLOY_URL"
-                  echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
-                  exit 0
-                fi
-              fi
-
-              if [ "$STATE" == "failure" ] || [ "$STATE" == "error" ]; then
-                echo "::endgroup::"
-                echo "Deployment $DEPLOY_ID failed with state: $STATE"
-                exit 1
-              fi
-            done
-
-            sleep $SLEEP_INTERVAL
-          done
-          
-          echo "::endgroup::"
-          echo "Timed out waiting for deployment"
-          exit 1
 
       - uses: actions/setup-python@v5
         if: github.event_name == 'schedule' || steps.filter.outputs.apis == 'true'

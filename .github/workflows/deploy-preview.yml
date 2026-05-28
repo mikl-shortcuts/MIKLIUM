@@ -1,0 +1,50 @@
+name: Deploy Previews
+
+on:
+  pull_request_target:
+    branches-ignore:
+      - 'main'
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
+      - 'beta/**'
+      - 'docs/**'
+      - 'webpage/**'
+
+permissions:
+  deployments: write
+  contents: read
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) && 'internal' || 'external' }}
+    outputs:
+      vercel_url: ${{ steps.vercel.outputs.preview-url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: johnbeynon/render-deploy-action@v16
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          clear-cache: false
+
+      - uses: amondnet/vercel-deploy@v6
+        id: vercel
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  run-tests:
+    needs: deploy-preview
+    uses: ./.github/workflows/api-tests.yml
+    with:
+      deploy_url: ${{ needs.deploy-preview.outputs.vercel_url }}
+    secrets: inherit

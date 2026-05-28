@@ -1,0 +1,44 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
+      - 'beta/**'
+      - 'docs/**'
+      - 'webpage/**'
+
+permissions:
+  deployments: write
+  contents: read
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: johnbeynon/render-deploy-action@v16
+        with:
+          service-id: ${{ secrets.RENDER_PROD_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          clear-cache: false
+
+      - uses: amondnet/vercel-deploy@v6
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-args: '--prod'
+
+  run-tests:
+    needs: deploy-prod
+    uses: ./.github/workflows/api-tests.yml
+    with:
+      deploy_url: https://miklium.vercel.app
+    secrets: inherit
