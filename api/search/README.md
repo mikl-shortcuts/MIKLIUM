@@ -19,7 +19,7 @@
 
 ## About MIKLIUM Search API
 
-**Get information from the Internet on your request in a convenient format.** You can also configure how much data you need to receive and in what format. Our API uses the Yahoo Search engine and website scraping system.
+**Get information from the Internet on your request in a convenient format.** You can also configure how much data you need to receive and in what format. Our API uses the Yahoo Search engine (with an automatic fallback to DuckDuckGo), a robust website scraping system, and complete multilingual Unicode support.
 
 ## Request Body
 
@@ -27,7 +27,7 @@ Link: `https://miklium.vercel.app/api/search`
 
 | Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `search` | Yes | Array | Search queries (maximum 3) |
+| `search` | Yes | Array | Search queries (maximum 5) |
 | `maxSmallSnippets`| No | Number | The number of short information for each request (by default `5`) |
 | `maxLargeSnippets` | No | Number | The number of long information for each request (by default `2`) |
 | `maxLargeSnippetSymbols` | No | Number | Maximum number of characters for one long information (by default `4500`) |
@@ -36,7 +36,7 @@ Link: `https://miklium.vercel.app/api/search`
 
 `https://miklium.vercel.app/api/search?search=Paste Your query(queries) here`
 
-If you want to write several requests at once (maximum 3), connect them with `~`. If you want to add additional parameters, write them through `&`.
+If you want to write several requests at once (maximum 5), connect them with `~`. If you want to add additional parameters, write them through `&`.
 
 > [!IMPORTANT]
 > For GET Method the search requests should be URL-encoded!
@@ -51,7 +51,7 @@ If you want to write several requests at once (maximum 3), connect them with `~`
 
 ```javascript
 {
-  "search": ["Paste Your query here", "If You need more requests at a time, add new objects to the list (maximum 3)"],
+  "search": ["Paste Your query here", "If You need more requests at a time, add new objects to the list (maximum 5)"],
   "maxSmallSnippets": 0, // Number (Not necessarily)
   "maxLargeSnippets": 0, // Number (Not necessarily)
   "maxLargeSnippetSymbols": 0 // Number (Not necessarily)
@@ -201,3 +201,4 @@ As you have already noticed, the API returns two types of information: `short` a
 ## What Services Does This API Use?
 
 - [Yahoo Search](https://search.yahoo.com)
+- [DuckDuckGo](https://duckduckgo.com) (used as a reliable fallback search engine)

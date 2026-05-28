@@ -15,12 +15,22 @@ function isLowValue(text) {
 
 function isQualityContent(text) {
   if (!text) return false;
-  const words = text.trim().split(/\s+/);
-  const wordCount = words.length;
-  if (wordCount < 15) return false;
-  const upperCaseCount = (text.match(/[A-Z]/g) || []).length;
-  const upperCaseRatio = upperCaseCount / wordCount;
-  return upperCaseRatio < 0.4 && wordCount > 100;
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  let wordCount = words.length;
+  
+  const cjkPattern = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf\uac00-\ud7af]/;
+  if (cjkPattern.test(text)) {
+    wordCount = text.replace(/\s+/g, '').length;
+  }
+  
+  if (wordCount < 30) return false;
+  
+  const cleanLetters = text.replace(/[^\p{L}]/gu, '');
+  if (cleanLetters.length === 0) return true;
+  const upperCaseCount = (cleanLetters.match(/\p{Lu}/gu) || []).length;
+  const upperCaseRatio = upperCaseCount / cleanLetters.length;
+  
+  return upperCaseRatio < 0.45;
 }
 
 function cleanHtmlText(html) {
@@ -39,7 +49,12 @@ async function fetchWithFallback(url, maxSymbols = 5000, maxRetries = 2) {
       const response = await axios.get(url, {
         timeout: 8000,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9,*;q=0.5',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Connection': 'keep-alive',
+          'Upgrade-Insecure-Requests': '1'
         }
       });
       const cleaned = cleanHtmlText(response.data);
@@ -53,8 +68,140 @@ async function fetchWithFallback(url, maxSymbols = 5000, maxRetries = 2) {
   throw new Error('Content not qualified');
 }
 
-async function handler(request, response) {
+function extractRealUrl(href) {
+  if (!href) return null;
+  if (!href.includes('r.search.yahoo.com')) {
+    try {
+      new URL(href);
+      return href;
+    } catch {
+      return null;
+    }
+  }
+  const match = href.match(/RU=([^/]+)/);
+  if (match && match[1]) {
+    try {
+      const decoded = decodeURIComponent(match[1]);
+      new URL(decoded);
+      return decoded.split('#')[0].split('?')[0];
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
 
+async function searchEngineQuery(query) {
+  const formattedQuery = encodeURIComponent(query.trim());
+  let html = null;
+  let source = 'yahoo';
+
+  try {
+    const yahooUrl = `https://search.yahoo.com/search?p=${formattedQuery}`;
+    const resp = await axios.get(yahooUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9,*;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none'
+      },
+      timeout: 10000
+    });
+    html = resp.data;
+  } catch (error) {
+    console.log(`Yahoo search failed for query "${query}": ${error.message}`);
+  }
+
+  if (!html) {
+    try {
+      source = 'duckduckgo';
+      const ddgUrl = `https://html.duckduckgo.com/html/?q=${formattedQuery}`;
+      const resp = await axios.get(ddgUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9,*;q=0.5',
+          'Accept-Encoding': 'gzip, deflate, br'
+        },
+        timeout: 10000
+      });
+      html = resp.data;
+    } catch (error) {
+      console.log(`DuckDuckGo fallback search failed for query "${query}": ${error.message}`);
+      return [];
+    }
+  }
+
+  const results = [];
+  const $ = cheerio.load(html);
+
+  if (source === 'yahoo') {
+    $('.algo, .algo-sr, .dd.algo, div[class*="algo"]').each((i, elem) => {
+      const $elem = $(elem);
+      const linkEl = $elem.find('a[href*="/RU="], h3 a, a.ac-algo').first();
+      const href = linkEl.attr('href');
+      const snippet = $elem.find('.compText, div[class*="compText"]').text().trim();
+      const realUrl = extractRealUrl(href);
+      if (realUrl && snippet) {
+        results.push({ realUrl, snippet });
+      }
+    });
+
+    if (results.length === 0) {
+      $('a[href*="/RU="]').each((i, elem) => {
+        const href = $(elem).attr('href');
+        const realUrl = extractRealUrl(href);
+        const parent = $(elem).closest('div');
+        const snippet = parent.parent().find('.compText, div[class*="compText"]').first().text().trim() ||
+                        parent.nextAll('.compText, div[class*="compText"]').first().text().trim();
+        if (realUrl && snippet && snippet.length > 10) {
+          results.push({ realUrl, snippet });
+        }
+      });
+    }
+  } else if (source === 'duckduckgo') {
+    $('.result').each((i, elem) => {
+      const $elem = $(elem);
+      const linkEl = $elem.find('.result__title a').first();
+      const href = linkEl.attr('href');
+      const snippet = $elem.find('.result__snippet').text().trim();
+      
+      let realUrl = null;
+      if (href) {
+        try {
+          if (href.startsWith('/l/?')) {
+            const searchParams = new URLSearchParams(href.split('?')[1]);
+            const uddg = searchParams.get('uddg');
+            if (uddg) {
+              realUrl = decodeURIComponent(uddg);
+            }
+          } else {
+            realUrl = href;
+          }
+          if (realUrl) {
+            new URL(realUrl);
+            realUrl = realUrl.split('#')[0].split('?')[0];
+          }
+        } catch {
+          realUrl = null;
+        }
+      }
+
+      if (realUrl && snippet) {
+        results.push({ realUrl, snippet });
+      }
+    });
+  }
+
+  return results;
+}
+
+async function handler(request, response) {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -119,50 +266,18 @@ async function handler(request, response) {
       let queryLongCount = 0;
 
       try {
-        const formattedQuery = encodeURIComponent(query.trim());
-        const searchUrl = `https://search.yahoo.com/search?p=${formattedQuery}`;
+        const queryResults = await searchEngineQuery(query);
 
-        const resp = await axios.get(searchUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept-Language': 'en-US,en;q=0.9'
-          },
-          timeout: 10000
-        });
-
-        const html = resp.data;
-        const elements = html.split('<div class="compText');
-
-        for (const element of elements.slice(1)) {
+        for (const item of queryResults) {
           if (queryShortCount >= maxSmallSnippets && queryLongCount >= maxLargeSnippets) {
             break;
           }
 
-          const snippetEnd = element.indexOf('</div>');
-          if (snippetEnd === -1) continue;
-          const snippetHtml = element.substring(0, snippetEnd);
-          const snippetRaw = cleanHtmlText(snippetHtml);
-          const snippet = snippetRaw.split('>')[1]?.trim() || snippetRaw.trim();
-
-          let realUrl = null;
-          const rkSplits = element.split('/RK=2/');
-          if (rkSplits.length > 1) {
-            const firstPart = rkSplits[0];
-            const equalsSplits = firstPart.split('=');
-            if (equalsSplits.length > 1) {
-              const encodedLink = equalsSplits[equalsSplits.length - 1];
-              try {
-                const decoded = decodeURIComponent(encodedLink);
-                realUrl = decoded.split('#')[0].split('?')[0];
-                new URL(realUrl);
-              } catch (error) {
-                realUrl = null;
-              }
-            }
-          }
+          const { realUrl, snippet } = item;
+          if (!realUrl || !snippet) continue;
 
           if (maxSmallSnippets > 0 && queryShortCount < maxSmallSnippets) {
-            if (realUrl && snippet && !isLowValue(snippet) && snippet.length > 30) {
+            if (snippet && !isLowValue(snippet) && snippet.length > 30) {
               results.push({
                 url: realUrl,
                 snippet,
@@ -174,7 +289,7 @@ async function handler(request, response) {
             }
           }
 
-          if (maxLargeSnippets > 0 && queryLongCount < maxLargeSnippets && realUrl) {
+          if (maxLargeSnippets > 0 && queryLongCount < maxLargeSnippets) {
             let urlObj;
             try {
               urlObj = new URL(realUrl);
@@ -202,7 +317,7 @@ async function handler(request, response) {
           }
         }
       } catch (error) {
-        console.log(`Yahoo search failed for query "${query}": ${error.message}`);
+        console.log(`Search query execution failed for "${query}": ${error.message}`);
         continue;
       }
     }
