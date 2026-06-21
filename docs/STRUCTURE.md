@@ -40,7 +40,7 @@ MIKLIUM is a platform of free, keyless serverless APIs. The codebase splits into
 | Directory | Purpose | Deploys to |
 |-----------|---------|------------|
 | `.github/` | Workflows, test scripts, issue templates | GitHub Actions |
-| `api/` | Serverless API endpoints | Vercel |
+| `api/` | Serverless API endpoints | Vercel + Render |
 | `beta/` | Experimental APIs | — |
 | `models/` | Standalone AI/ML models | — |
 | `docs/` | Documentation for MIKLIUM users and developers | — |
@@ -58,7 +58,7 @@ MIKLIUM/
 │   ├── scripts/ ← scripts for CI/CD workflows
 │   └── ISSUE_TEMPLATE/ ← issue forms
 │
-├── api/ ← our APIs (Vercel)
+├── api/ ← our APIs (Vercel + Render)
 │   ├── your-api-name/ ← one folder per API
 │   │   ├── index.js or .py ← entry point
 │   │   ├── README.md ← documentation
@@ -104,7 +104,7 @@ flowchart TB
         CT("<b>config.toml</b><br/>Config"):::file
     end
 
-    IDX -->|"Vercel deploys"| LIVE(("<b>/api/your-name</b><br/>Live endpoint")):::endpoint
+    IDX -->|"Vercel or Render deploys"| LIVE(("<b>/api/your-name</b><br/>Live endpoint")):::endpoint
 
     RM -->|"CI concatenates<br/>all READMEs"| APIDOCS["<b>APIDOCS.md</b>"]:::generated
     APIDOCS -->|"fetched by"| DOCSPAGE["<b>APIDOCS.html</b><br/>Docs page"]:::page
@@ -180,13 +180,16 @@ Every API must have three files:
 
 | File | Purpose | Read by |
 |------|---------|---------|
-| `index.js` / `index.py` / any Vercel-supported runtime | Serverless function entry point | Vercel |
+| `index.js` / `index.py` / any supported runtime | Serverless function entry point | Vercel or Render |
 | `README.md` | API documentation | CI + users |
 | `config.toml` | Playground UI + test case definitions | Website + CI |
 
+> [!NOTE]
+> Most APIs run on Vercel. Some components, such as `api/python-sandbox`, also use Render services for backend execution.
+
 ### Optional Files
 
-Add anything your API needs - Vercel deploys the entire folder:
+Add anything your API needs. Vercel and Render deploy the entire folder:
 
 | File | When |
 |------|------|
@@ -315,7 +318,7 @@ Every API must return JSON with a `success` boolean:
 ### Node.js API `index.js`
 
 ```javascript
-// This is a Vercel serverless function.
+// This is a serverless function.
 // It handles GET and POST requests and returns JSON.
 
 // Add npm dependencies to package.json if needed:
@@ -429,7 +432,7 @@ module.exports = handler;
 ### Python API `index.py`
 
 ```python
-""" This is a Vercel serverless function.
+""" This is a serverless function.
 It handles GET and POST requests and returns JSON. """
 
 # Import your helper modules or dependencies here:
@@ -927,12 +930,13 @@ CORS headers (`Access-Control-Allow-Origin: *`) are applied to all `/api/*` resp
 
 | Workflow | Triggers | What it does |
 |----------|----------|-------------|
-| **api-tests** | Push/PR to `api/**`, every 3 days | Reads `[test]` from each `config.toml`, runs cases against live deployment |
-| **update-readme-and-apidocs** | Push changing `api/**/README.md` or featured projects table in `FEATURED_PROJECTS.md` file | Concatenates all READMEs → `APIDOCS.md`, updates API list + featured projects in `README.md` |
-| **deploy** | Push to `webpage/**` | Deploys website to GitHub Pages |
+| **deploy-preview** | Pull requests, manual run | Triggers Render preview deployment, builds and deploys preview to Vercel, then runs API tests |
+| **deploy-production** | Push to `main`, manual run | Triggers Render production deployment, deploys to Vercel, then runs API tests |
+| **api-tests** | Called by deploy workflows, every 3 days | Reads `[test]` from each `config.toml` and runs test cases |
+| **update-readme-and-apidocs** | Push changing `api/**/README.md` or featured projects | Updates `APIDOCS.md` and generated sections in `README.md` |
 | **codeql** | Push/PR, weekly | Security scanning |
-| **issues-helper** | Issue opened/labeled | Processes project submissions, responds to questions |
-| **closed-issue-notifications** | Issue closed | Notifies submitter of result |
+| **issues-helper** | Issue opened/labeled | Processes project submissions and questions |
+| **closed-issue-notifications** | Issue closed | Sends notifications to submitters |
 
 ### Auto-Generated Files
 
@@ -953,7 +957,7 @@ CORS headers (`Access-Control-Allow-Origin: *`) are applied to all `/api/*` resp
 | What | Convention | Examples |
 |------|-----------|---------|
 | API folder | `kebab-case` | `python-sandbox`, `shortcut-info` |
-| Entry point | `index.js`, `index.py`, or other Vercel-supported runtime | — |
+| Entry point | `index.js`, `index.py`, or other supported runtime | — |
 | JSON response keys | `camelCase` | `maxResults`, `includeInfo` |
 | Config & docs | Exact names: `config.toml`, `README.md` | — |
 
