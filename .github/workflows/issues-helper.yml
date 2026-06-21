@@ -50,9 +50,9 @@ jobs:
             }
 
             const projectQuery = await github.graphql(`
-              query(org: String!, number: Int!) {
-                organization(login: org) {
-                  projectV2(number: number) {
+              query($org: String!, $number: Int!) {
+                organization(login: $org) {
+                  projectV2(number: $number) {
                     id
                     fields(first: 20) {
                       nodes {
@@ -121,8 +121,8 @@ jobs:
               }
             } else {
               const addResult = await github.graphql(`
-                mutation(projectId: ID!, contentId: ID!) {
-                  addProjectV2ItemById(input: {projectId: projectId, contentId: contentId}) {
+                mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
                     item { id }
                   }
                 }
@@ -131,12 +131,12 @@ jobs:
             }
 
             await github.graphql(`
-              mutation(projectId: ID!, itemId: ID!, fieldId: ID!, optionId: String!) {
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
                 updateProjectV2ItemFieldValue(input: {
-                  projectId: projectId
-                  itemId: itemId
-                  fieldId: fieldId
-                  value: { singleSelectOptionId: optionId }
+                  projectId: $projectId
+                  itemId: $itemId
+                  fieldId: $fieldId
+                  value: { singleSelectOptionId: $optionId }
                 }) {
                   projectV2Item { id }
                 }
