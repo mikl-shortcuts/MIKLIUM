@@ -594,7 +594,7 @@ docs_anchor = "my-api-documentation" # APIDOCS.html anchor
 
 # Text input
 [[playground.inputs]]
-id = "myParam"  # → {"myParam": "user input"}
+id = "myParam"  # → {"myParam": "user input"}
 label = "My Parameter"
 type = "text"
 placeholder = "Enter something..."
@@ -602,7 +602,7 @@ required = true
 
 # Number with range
 [[playground.inputs]]
-id = "count"  # → {"count": 5}
+id = "count"  # → {"count": 5}
 label = "Result Count"
 type = "number"
 min = 1
@@ -617,12 +617,33 @@ type = "select"
 options = ["fast", "detailed"]
 default = "fast"
 
+# Conditional input (Only shown when "mode" is set to "detailed")
+[[playground.inputs]]
+id = "depth"
+label = "Analysis Depth"
+type = "number"
+min = 1
+max = 10
+default = 3
+visible_if_id = "mode"
+visible_if_value = "detailed"
+
 # Toggle
 [[playground.inputs]]
 id = "includeMetadata" # → {"includeMetadata": true}
 label = "Include Metadata"
 type = "checkbox"
 default = false
+
+# Conditional input (Only shown when "includeMetadata" is checked/true)
+[[playground.inputs]]
+id = "metadataFormat"
+label = "Metadata Format"
+type = "select"
+options = ["json", "xml"]
+default = "json"
+visible_if_id = "includeMetadata"
+visible_if_value = true
 
 # Multi-line (uncomment if needed)
 # [[playground.inputs]]
@@ -651,6 +672,7 @@ expected_value = true # ...equals this value
 [test.cases.payload] # Request body
 myParam = "hello"
 count = 3
+mode = "fast"
 
 # Error case
 [[test.cases]]
@@ -702,16 +724,26 @@ Each block adds one input field. The `id` becomes the JSON key in the request bo
 | `default` | No | Pre-filled value |
 | `min`, `max` | No | Range limits (for `number`) |
 | `options` | No | Choices array (for `select`) |
+| `visible_if_id` | No | The `id` of another field that controls this input's visibility |
+| `visible_if_value` | No | The specific value of the monitored field that will trigger this input to show |
 
 **Input types:**
 
 | Type | Renders as | Supports |
 |------|-----------|----------|
-| `text` | Single-line input | `placeholder`, `required` |
-| `textarea` | Multi-line input | `placeholder`, `required` |
-| `number` | Numeric spinner | `min`, `max`, `default` |
-| `select` | Dropdown menu | `options`, `default` |
-| `checkbox` | Toggle switch | `default` |
+| `text` | Single-line input | `placeholder`, `required`, conditional rules |
+| `textarea` | Multi-line input | `placeholder`, `required`, conditional rules |
+| `number` | Numeric spinner | `min`, `max`, `default`, conditional rules |
+| `select` | Dropdown menu | `options`, `default`, conditional rules |
+| `checkbox` | Toggle switch | `default`, conditional rules |
+
+#### Conditional Visibility
+
+You can conditionally show or hide form inputs using `visible_if_id` and `visible_if_value`. 
+
+* **Behavior:** When an input is hidden, it is excluded from the generated JSON request body.
+* **Validation:** If a hidden input is marked as `required = true`, validation checks are skipped while it remains hidden, allowing the form to submit successfully.
+* **Matching:** Boolean checkboxes should match `true` or `false` values (without quotes), while text and select elements are matched using string comparisons.
 
 #### `[test]` — test metadata
 
